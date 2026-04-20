@@ -1,0 +1,1741 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OVERTIME — LOOPPP</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#f7f5f0;color:#1a1a1a;font-family:'DM Sans',sans-serif;font-size:13px;overflow:hidden}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:#efefef}
+::-webkit-scrollbar-thumb{background:#ccc;border-radius:2px}
+
+/* ── NAV ── */
+nav{height:50px;background:#fff;border-bottom:1px solid #e8e5df;display:flex;align-items:center;padding:0 20px;gap:0;position:relative;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:.15em;color:#1a1a1a;margin-right:28px;display:flex;align-items:baseline;gap:8px}
+.logo em{color:#aaa;font-style:normal;font-size:10px;font-family:'DM Mono',monospace;letter-spacing:.1em}
+.nl{padding:0 14px;height:50px;display:flex;align-items:center;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#aaa;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s}
+.nl:hover{color:#1a1a1a}
+.nl.on{color:#1a1a1a;border-bottom-color:#1a1a1a}
+.nav-r{margin-left:auto;display:flex;gap:8px;align-items:center}
+
+/* ── BUTTONS ── */
+.btn{padding:6px 14px;border-radius:5px;border:1px solid #ddd;background:#fff;cursor:pointer;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#888;transition:all .12s}
+.btn:hover{border-color:#1a1a1a;color:#1a1a1a}
+.btn-dark{background:#1a1a1a;border-color:#1a1a1a;color:#fff}
+.btn-dark:hover{background:#333;border-color:#333;color:#fff}
+.btn-r{border-color:#ff3b30;color:#ff3b30}
+.btn-r:hover{background:#ff3b30;color:#fff}
+.btn-sm{padding:4px 10px;font-size:9px}
+.btn-xs{padding:3px 8px;font-size:9px}
+
+/* ── PAGES ── */
+.pg{display:none;position:fixed;top:50px;left:0;right:0;bottom:0}
+.pg.on{display:flex}
+
+/* ══════════════════════════════════
+   PLANNING PAGE
+══════════════════════════════════ */
+#pg-plan{flex-direction:row}
+
+/* Sidebar */
+.sb{width:200px;min-width:200px;background:#fff;border-right:1px solid #e8e5df;display:flex;flex-direction:column;overflow:hidden}
+.sb-sec{border-bottom:1px solid #e8e5df}
+.sb-sec-hd{padding:10px 12px 8px;display:flex;align-items:center;justify-content:space-between}
+.sb-sec-t{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:.1em;color:#888}
+.sb-sec-body{padding:6px 8px}
+.sb-scroll{flex:1;overflow-y:auto}
+
+/* Project chip (draggable) */
+.proj-chip{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:6px;border:1px solid #eee;background:#fafafa;margin-bottom:4px;cursor:grab;user-select:none;transition:all .12s;position:relative;overflow:hidden}
+.proj-chip::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px}
+.proj-chip:hover{border-color:#ddd;background:#f5f5f5;transform:translateX(2px)}
+.proj-chip.dragging{opacity:.3}
+.proj-chip-name{font-weight:600;font-size:12px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.proj-chip-ref{font-family:'DM Mono',monospace;font-size:9px;color:#aaa}
+
+/* Freelance chip (draggable) */
+.fl-chip{display:flex;align-items:center;gap:7px;padding:7px 9px;border-radius:6px;border:1px solid #eee;background:#fafafa;margin-bottom:3px;cursor:grab;user-select:none;transition:all .12s}
+.fl-chip:hover{border-color:#ddd;background:#f5f5f5;transform:translateX(2px)}
+.fl-chip.dragging{opacity:.3}
+.av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:11px;flex-shrink:0;border:1px solid rgba(0,0,0,.08)}
+.fl-nm{font-weight:600;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fl-rl{font-family:'DM Mono',monospace;font-size:9px;color:#aaa;text-transform:uppercase}
+
+.fpill{padding:2px 7px;border-radius:20px;border:1px solid #e8e5df;font-family:'DM Mono',monospace;font-size:9px;cursor:pointer;color:#aaa;transition:all .1s;user-select:none}
+.fpill:hover{border-color:#aaa;color:#555}
+.fpill.on{background:#1a1a1a;border-color:#1a1a1a;color:#fff}
+
+/* Planning main */
+.plan-main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:#f7f5f0}
+.plan-tb{height:44px;background:#fff;border-bottom:1px solid #e8e5df;display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0}
+.vtg{display:flex;background:#f0ede8;border-radius:5px;padding:2px;gap:1px}
+.vt{padding:4px 12px;border:none;border-radius:4px;background:transparent;cursor:pointer;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#aaa;transition:all .12s}
+.vt.on{background:#1a1a1a;color:#fff}
+.parr{width:26px;height:26px;background:#fff;border:1px solid #e0ddd8;border-radius:5px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#888;font-size:13px;transition:all .12s}
+.parr:hover{border-color:#1a1a1a;color:#1a1a1a}
+.plbl{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:.07em;min-width:180px;text-align:center;color:#1a1a1a}
+.plan-grid{flex:1;overflow:auto}
+
+/* ── MONTH GRID ── */
+.mg{display:grid;grid-template-columns:repeat(7,1fr);min-width:900px}
+.mg-hd{padding:7px 8px;text-align:center;background:#fff;border-bottom:1px solid #e8e5df;border-right:1px solid #e8e5df;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#aaa;position:sticky;top:0;z-index:5}
+.mc{min-height:130px;border-bottom:1px solid #e8e5df;border-right:1px solid #e8e5df;padding:5px;vertical-align:top;background:#fff;transition:background .1s;position:relative}
+.mc.other{background:#f7f5f0;opacity:.5}
+.mc.today{outline:2px solid #1a1a1a;outline-offset:-2px}
+.mc.we{background:#faf9f7}
+.mc.ferie{background:#fff5f5}
+.mc.drop-over{background:#f0f9ff !important;outline:2px dashed #1a1a1a;outline-offset:-2px}
+.mc.drop-over::after{
+  content:'📋 ←  → ✂️';
+  position:absolute;bottom:3px;left:0;right:0;
+  text-align:center;font-size:9px;font-family:'DM Mono',monospace;
+  color:#888;pointer-events:none;letter-spacing:.05em;
+}
+.wc.drop-over::after{
+  content:'📋 ←  → ✂️';
+  display:block;text-align:center;
+  font-size:9px;font-family:'DM Mono',monospace;
+  color:#888;padding:4px 0;letter-spacing:.05em;
+}
+.mc-num{font-family:'Bebas Neue',sans-serif;font-size:16px;color:#ccc;margin-bottom:3px;line-height:1;display:flex;align-items:baseline;gap:4px}
+.mc-num.tn{color:#1a1a1a}
+.mc-ferie{font-family:'DM Mono',monospace;font-size:7px;color:#e03030;text-transform:uppercase;letter-spacing:.04em}
+.mc-add{opacity:0;position:absolute;top:5px;right:5px;width:20px;height:20px;background:#f0ede8;border-radius:4px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:#888;transition:all .1s;font-weight:300}
+.mc:hover .mc-add{opacity:1}
+.mc-add:hover{background:#1a1a1a;color:#fff}
+
+/* ── POST-IT ── */
+.pi{border-radius:7px;padding:8px 9px;margin-bottom:5px;cursor:pointer;transition:all .15s;position:relative;border:1px solid rgba(0,0,0,.06)}
+.pi:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.1)}
+.pi.drop-on{outline:2px solid #1a1a1a;outline-offset:-1px;transform:translateY(-1px)}
+.pi-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px}
+.pi-ref{font-family:'DM Mono',monospace;font-size:8px;opacity:.5;line-height:1}
+.pi-name{font-weight:700;font-size:11px;line-height:1.25;flex:1}
+.pi-badge{padding:2px 6px;border-radius:20px;font-family:'DM Mono',monospace;font-size:8px;font-weight:600;letter-spacing:.05em;white-space:nowrap;margin-top:3px;display:inline-block;margin-bottom:4px}
+.pi-persons{display:flex;flex-wrap:wrap;gap:2px;margin-bottom:4px}
+.pi-pav{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:8px;border:1px solid rgba(255,255,255,.5)}
+.pi-footer{display:flex;justify-content:space-between;align-items:center}
+.pi-slots{font-family:'DM Mono',monospace;font-size:9px;font-weight:500}
+.pi-cost{font-family:'DM Mono',monospace;font-size:9px;color:#888}
+/* Empty card (no team yet) */
+.pi-empty-hint{font-family:'DM Mono',monospace;font-size:9px;color:rgba(0,0,0,.35);font-style:italic;margin-bottom:4px}
+
+/* ── WEEK GRID ── */
+.wg{display:grid;grid-template-columns:repeat(7,1fr);min-width:800px;min-height:100%}
+.wc-hd{padding:9px 8px;text-align:center;background:#fff;border-bottom:1px solid #e8e5df;border-right:1px solid #e8e5df;position:sticky;top:0;z-index:5}
+.wc-hd.today{background:#1a1a1a}
+.wc-hd.today .wh-day,.wc-hd.today .wh-date{color:#fff}
+.wc-hd.we{background:#faf9f7}
+.wh-day{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:.1em;color:#bbb}
+.wh-date{font-family:'DM Mono',monospace;font-size:10px;color:#ccc;margin-top:1px}
+.wh-ferie{font-size:7px;color:#e03030;font-family:'DM Mono',monospace;letter-spacing:.04em;margin-top:1px}
+.wc{border-right:1px solid #e8e5df;border-bottom:1px solid #e8e5df;padding:6px;min-height:calc(100vh - 145px);display:flex;flex-direction:column;gap:5px;background:#fff}
+.wc.we{background:#faf9f7}
+.wc.drop-over{background:#f0f9ff !important;outline:2px dashed #1a1a1a;outline-offset:-3px}
+
+/* ── SUMMARY BAR ── */
+.sum{height:42px;background:#fff;border-top:1px solid #e8e5df;display:flex;align-items:center;padding:0 16px;gap:0;flex-shrink:0;overflow-x:auto;box-shadow:0 -1px 4px rgba(0,0,0,.04)}
+.ss{display:flex;flex-direction:column;padding:0 14px;border-right:1px solid #e8e5df;flex-shrink:0}
+.ss:first-child{padding-left:0}
+.ss-l{font-family:'DM Mono',monospace;font-size:8px;color:#bbb;text-transform:uppercase;letter-spacing:.08em}
+.ss-v{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:.04em;line-height:1.1;color:#1a1a1a}
+.ss-v.muted{color:#888}
+
+/* Phase colors — light theme */
+.ph-atelier{background:#e8f4ff;color:#1a6fc4}
+.ph-shoot,.ph-on-set{background:#f3eeff;color:#7c3aed}
+.ph-install,.ph-strike{background:#fff3e0;color:#c2740a}
+.ph-nuit{background:#e8f8ee;color:#1a8a42}
+.ph-dep{background:#f0f0f0;color:#888}
+
+/* ══════════════════════════════════
+   PROJECT POPUP
+══════════════════════════════════ */
+.pp-bg{position:fixed;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);z-index:400;display:flex;align-items:center;justify-content:center}
+.pp{background:#fff;border:1px solid #e8e5df;border-radius:12px;width:560px;max-width:96vw;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 8px 40px rgba(0,0,0,.15)}
+.pp-head{padding:18px 22px 14px;border-bottom:1px solid #f0ede8;flex-shrink:0}
+.pp-title{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:.07em;margin-bottom:2px;color:#1a1a1a}
+.pp-meta{font-family:'DM Mono',monospace;font-size:10px;color:#aaa}
+.pp-body{flex:1;overflow-y:auto;padding:18px 22px}
+.pp-foot{padding:14px 22px;border-top:1px solid #f0ede8;background:#faf9f7;border-radius:0 0 12px 12px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.pp-total{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:.05em;color:#1a1a1a}
+.pp-lbl{font-family:'DM Mono',monospace;font-size:9px;color:#aaa;text-align:right}
+.pp-sec{font-family:'DM Mono',monospace;font-size:9px;color:#bbb;text-transform:uppercase;letter-spacing:.1em;margin:14px 0 6px;display:flex;align-items:center;gap:6px}
+.pp-sec:first-child{margin-top:0}
+.form-lbl{display:block;font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.09em;color:#aaa;margin-bottom:4px}
+.form-inp,.form-sel{width:100%;padding:8px 10px;border:1px solid #e8e5df;border-radius:6px;background:#fff;color:#1a1a1a;font-family:'DM Sans',sans-serif;font-size:12px;transition:border-color .12s}
+.form-inp:focus,.form-sel:focus{outline:none;border-color:#1a1a1a}
+.form-sel option{background:#fff}
+
+/* Freelance row in popup */
+.pp-fl{display:flex;align-items:center;gap:8px;padding:10px 12px;background:#faf9f7;border:1px solid #eeebe6;border-radius:7px;margin-bottom:5px}
+.pp-fl-nm{font-weight:600;font-size:13px}
+.pp-fl-rl{font-family:'DM Mono',monospace;font-size:9px;color:#aaa;text-transform:uppercase}
+.pp-fl-rate{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.04em;color:#1a1a1a;white-space:nowrap}
+.pp-fl-sub{font-family:'DM Mono',monospace;font-size:8px;color:#aaa;text-align:right}
+.chef-btn{padding:3px 9px;border-radius:20px;border:1px solid #e0ddd8;background:#fff;cursor:pointer;font-family:'DM Mono',monospace;font-size:9px;color:#aaa;transition:all .1s}
+.chef-btn.on{background:#f0d000;border-color:#e0c000;color:#1a1a1a;font-weight:700}
+.stp{display:flex;align-items:center;gap:3px}
+.stp-b{width:22px;height:22px;border-radius:4px;border:1px solid #e0ddd8;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#aaa;transition:all .1s;flex-shrink:0}
+.stp-b:hover{border-color:#1a1a1a;color:#1a1a1a}
+.stp-v{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;min-width:34px;text-align:center;background:#f0ede8;border-radius:4px;padding:2px 4px;color:#1a1a1a}
+.bulk-row{display:flex;gap:5px;margin-bottom:8px}
+.bulk-b{padding:3px 9px;border-radius:4px;border:1px solid #e0ddd8;background:#fff;cursor:pointer;font-family:'DM Mono',monospace;font-size:9px;color:#aaa;transition:all .1s}
+.bulk-b:hover{border-color:#1a1a1a;color:#1a1a1a}
+.pp-search{width:100%;padding:9px 12px;border:1px solid #e8e5df;border-radius:6px;background:#faf9f7;color:#1a1a1a;font-family:'DM Sans',sans-serif;font-size:12px;margin-bottom:5px}
+.pp-search:focus{outline:none;border-color:#1a1a1a}
+.pp-sr{background:#faf9f7;border:1px solid #e8e5df;border-radius:6px;overflow:hidden;margin-bottom:6px}
+.pp-sri{padding:8px 12px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:background .1s;font-size:12px}
+.pp-sri:hover{background:#f0ede8}
+.maj-row{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.maj-btn{padding:6px;border-radius:5px;border:1px solid #e0ddd8;background:#fff;cursor:pointer;font-family:'DM Mono',monospace;font-size:9px;text-align:center;color:#aaa;transition:all .1s}
+.maj-btn.on{border-color:#1a1a1a;background:#1a1a1a;color:#fff;font-weight:700}
+.maj-btn:hover{border-color:#888;color:#1a1a1a}
+
+/* ══════════════════════════════════
+   MODALS
+══════════════════════════════════ */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.3);backdrop-filter:blur(4px);z-index:600;display:flex;align-items:center;justify-content:center}
+.modal{background:#fff;border:1px solid #e8e5df;border-radius:12px;padding:26px;width:480px;max-width:96vw;max-height:90vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.12)}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:.07em;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid #f0ede8;color:#1a1a1a}
+.form-row{margin-bottom:12px}
+.form-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.modal-foot{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;padding-top:14px;border-top:1px solid #f0ede8}
+.c-strip{display:flex;gap:5px;flex-wrap:wrap;margin-top:4px}
+.c-sw{width:22px;height:22px;border-radius:4px;cursor:pointer;border:2px solid transparent;transition:all .1s}
+.c-sw.on,.c-sw:hover{border-color:#1a1a1a;transform:scale(1.2)}
+.tag-row{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.tag-pill{padding:3px 9px;border-radius:20px;border:1px solid #e0ddd8;font-family:'DM Mono',monospace;font-size:9px;cursor:pointer;color:#aaa;background:#fff;transition:all .1s}
+.tag-pill.on{background:#1a1a1a;border-color:#1a1a1a;color:#fff}
+.role-hint{margin-top:5px;font-family:'DM Mono',monospace;font-size:9px;color:#bbb;line-height:1.6;padding:7px 10px;background:#f7f5f0;border-radius:5px}
+
+/* ══════════════════════════════════
+   PROJETS PAGE
+══════════════════════════════════ */
+#pg-proj{overflow-y:auto;flex-direction:column;background:#f7f5f0}
+.page-wrap{padding:28px;max-width:1100px;margin:0 auto;width:100%}
+.page-title{font-family:'Bebas Neue',sans-serif;font-size:44px;letter-spacing:.07em;color:#1a1a1a;margin-bottom:2px}
+.page-sub{font-family:'DM Mono',monospace;font-size:10px;color:#bbb;margin-bottom:24px}
+.status-bar{display:flex;background:#fff;border:1px solid #e8e5df;border-radius:7px;padding:3px;gap:2px;margin-bottom:20px;width:fit-content;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.stab{padding:5px 14px;border:none;border-radius:5px;background:transparent;cursor:pointer;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:#aaa;transition:all .12s}
+.stab.on{background:#1a1a1a;color:#fff}
+.stab-n{display:inline-flex;align-items:center;justify-content:center;min-width:16px;height:16px;border-radius:20px;background:rgba(0,0,0,.08);font-size:9px;margin-left:3px;padding:0 3px}
+.proj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px}
+.pc{background:#fff;border:1px solid #e8e5df;border-radius:10px;padding:16px;transition:all .15s;position:relative;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.pc:hover{border-color:#ccc;transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.1)}
+.pc-stripe{position:absolute;top:0;left:0;right:0;height:3px}
+.pc-ref{font-family:'DM Mono',monospace;font-size:9px;color:#bbb;margin-bottom:3px}
+.pc-name{font-weight:700;font-size:15px;margin-bottom:2px;line-height:1.2;color:#1a1a1a}
+.pc-client{font-family:'DM Mono',monospace;font-size:10px;color:#bbb;margin-bottom:12px}
+.pc-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.pc-stat{background:#f7f5f0;border-radius:5px;padding:7px 9px}
+.pc-stat-l{font-family:'DM Mono',monospace;font-size:8px;color:#bbb;text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px}
+.pc-stat-v{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.04em;color:#1a1a1a}
+.pc-bar{height:4px;background:#f0ede8;border-radius:2px;overflow:hidden;margin-bottom:12px}
+.pc-bar-f{height:100%;border-radius:2px;transition:width .3s}
+.pc-status{padding:2px 8px;border-radius:20px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.05em;text-transform:uppercase;display:inline-block;border:1px solid}
+.st-active{background:#e8f8ee;color:#1a8a42;border-color:#b6eac7}
+.st-upcoming{background:#e8f1ff;color:#1a5cc4;border-color:#b6ccf0}
+.st-done{background:#f0f0f0;color:#888;border-color:#e0e0e0}
+.st-pause{background:#fff3e0;color:#b26300;border-color:#f0d090}
+.st-arch{background:#f5f5f5;color:#bbb;border-color:#e8e8e8}
+.pc-foot{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+.pc-actions{display:flex;gap:5px;opacity:0;transition:opacity .15s}
+.pc:hover .pc-actions{opacity:1}
+
+/* ══════════════════════════════════
+   FREELANCES PAGE
+══════════════════════════════════ */
+#pg-fl{overflow-y:auto;flex-direction:column;background:#f7f5f0}
+.fl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin-top:18px}
+.flc{background:#fff;border:1px solid #e8e5df;border-radius:10px;padding:15px;transition:all .15s;position:relative;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.flc:hover{border-color:#ccc;transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.1)}
+.flc-stripe{position:absolute;top:0;left:0;bottom:0;width:3px}
+.flc-top{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.flc-av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:15px;flex-shrink:0;border:1px solid rgba(0,0,0,.08)}
+.flc-nm{font-weight:700;font-size:14px;color:#1a1a1a}
+.flc-rl{font-family:'DM Mono',monospace;font-size:9px;color:#bbb;text-transform:uppercase;letter-spacing:.06em;margin-top:1px}
+.flc-rates{display:grid;grid-template-columns:1fr 1fr;gap:5px;background:#f7f5f0;border-radius:6px;padding:8px;margin-bottom:8px}
+.flc-rate-l{font-family:'DM Mono',monospace;font-size:8px;color:#bbb;text-transform:uppercase;margin-bottom:1px}
+.flc-rate-v{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.04em;color:#1a1a1a}
+.flc-tags{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:8px}
+.flc-tag{padding:2px 6px;border-radius:20px;border:1px solid #e8e5df;font-family:'DM Mono',monospace;font-size:8px;color:#aaa}
+.flc-stats{display:flex;gap:14px;margin-bottom:8px}
+.flc-st-l{font-family:'DM Mono',monospace;font-size:8px;color:#bbb;text-transform:uppercase;letter-spacing:.06em}
+.flc-st-v{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:.04em;color:#1a1a1a}
+.flc-foot{display:flex;gap:5px;opacity:0;transition:opacity .15s}
+.flc:hover .flc-foot{opacity:1}
+.fav{position:absolute;top:10px;right:10px;font-size:14px;cursor:pointer;opacity:.2;transition:all .12s}
+.fav:hover{opacity:.6}
+.fav.on{opacity:1;color:#f0c000}
+
+/* ══════════════════════════════════
+   ANALYTIQUE PAGE
+══════════════════════════════════ */
+#pg-an{overflow-y:auto;flex-direction:column;background:#f7f5f0}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:22px}
+.kpi{background:#fff;border:1px solid #e8e5df;border-radius:10px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.05);position:relative;overflow:hidden}
+.kpi::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px}
+.kpi-l{font-family:'DM Mono',monospace;font-size:9px;color:#bbb;text-transform:uppercase;letter-spacing:.09em;margin-bottom:5px}
+.kpi-v{font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:.04em;line-height:1;color:#1a1a1a}
+.kpi-sub{font-family:'DM Mono',monospace;font-size:9px;color:#bbb;margin-top:3px}
+.kpi.y .kpi-v{color:#b28000}
+.kpi.y::after{background:#f0d000}
+.kpi.g .kpi-v{color:#1a8a42}
+.kpi.g::after{background:#34c759}
+.kpi.b .kpi-v{color:#1a5cc4}
+.kpi.b::after{background:#0a84ff}
+.an-tb{width:100%;border-collapse:collapse;margin-bottom:22px;background:#fff;border-radius:8px;overflow:hidden;border:1px solid #e8e5df}
+.an-tb th{background:#f7f5f0;padding:9px 12px;text-align:left;font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:#bbb;border-bottom:1px solid #e8e5df}
+.an-tb td{padding:10px 12px;border-bottom:1px solid #f0ede8;font-size:12px;color:#1a1a1a}
+.an-tb tr:last-child td{border-bottom:none}
+.an-tb tr:hover td{background:#faf9f7}
+.an-tb .tot td{background:#f7f5f0;font-weight:600;border-top:1px solid #e8e5df;font-family:'DM Mono',monospace}
+.bar-row{display:flex;align-items:center;gap:7px}
+.bar-t{flex:1;height:4px;background:#f0ede8;border-radius:2px;overflow:hidden}
+.bar-f{height:100%;border-radius:2px}
+.an-sec{margin-bottom:22px}
+.an-sec-t{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.08em;color:#bbb;display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.an-sec-t::after{content:'';flex:1;height:1px;background:#e8e5df}
+
+.hidden{display:none!important}
+
+/* ── CARD DRAG ── */
+.pi.card-dragging{opacity:.3;transform:scale(.97)}
+.pi.card-drag-source{outline:2px dashed #ccc;outline-offset:-2px}
+
+/* ── MOVE/COPY POPUP ── */
+.mc-popup{
+  position:fixed;
+  background:#fff;
+  border:1px solid #e0ddd8;
+  border-radius:8px;
+  box-shadow:0 4px 20px rgba(0,0,0,.15);
+  z-index:800;
+  overflow:hidden;
+  min-width:160px;
+}
+.mc-popup-title{
+  padding:9px 14px 6px;
+  font-family:'DM Mono',monospace;
+  font-size:9px;text-transform:uppercase;
+  letter-spacing:.1em;color:#bbb;
+  border-bottom:1px solid #f0ede8;
+}
+.mc-popup-btn{
+  display:flex;align-items:center;gap:10px;
+  padding:11px 14px;cursor:pointer;
+  transition:background .1s;
+  font-size:13px;font-weight:500;
+}
+.mc-popup-btn:hover{background:#f7f5f0}
+.mc-popup-btn svg{flex-shrink:0;opacity:.5}
+.mc-popup-btn.cancel{color:#aaa;font-size:12px;border-top:1px solid #f0ede8}
+
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">OVERTIME <em>BY LOOPPP</em></div>
+  <div class="nl on" id="nl-plan" onclick="goPage('plan')">Planning</div>
+  <div class="nl" id="nl-proj" onclick="goPage('proj')">Projets</div>
+  <div class="nl" id="nl-fl" onclick="goPage('fl')">Freelances</div>
+  <div class="nl" id="nl-an" onclick="goPage('an')">Analytique</div>
+  <div class="nav-r">
+    <button class="btn btn-sm" onclick="doExport()">⬆ Export</button>
+    <button class="btn btn-sm" onclick="document.getElementById('imp-f').click()">⬇ Import</button>
+    <input type="file" id="imp-f" accept=".json" style="display:none" onchange="doImport(event)">
+  </div>
+</nav>
+
+<!-- PLANNING PAGE -->
+<div class="pg on" id="pg-plan">
+  <div class="sb">
+    <div class="sb-scroll">
+      <!-- PROJETS section -->
+      <div class="sb-sec">
+        <div class="sb-sec-hd">
+          <div class="sb-sec-t">Projets</div>
+          <button class="btn btn-xs btn-dark" onclick="goPage('proj');openProjModal()">+</button>
+        </div>
+        <div class="sb-sec-body" id="sb-projs"></div>
+      </div>
+      <!-- FREELANCES section -->
+      <div class="sb-sec">
+        <div class="sb-sec-hd">
+          <div class="sb-sec-t">Freelances</div>
+          <button class="btn btn-xs btn-dark" onclick="goPage('fl');openFlModal()">+</button>
+        </div>
+        <div style="padding:6px 8px;display:flex;flex-wrap:wrap;gap:3px;border-bottom:1px solid #f0ede8" id="sb-filters"></div>
+        <div class="sb-sec-body" id="sb-fls"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="plan-main">
+    <div class="plan-tb">
+      <div class="vtg">
+        <button class="vt on" id="vt-month" onclick="setView('month')">Mois</button>
+        <button class="vt" id="vt-week" onclick="setView('week')">Semaine</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="parr" onclick="nav(-1)">‹</div>
+        <div class="plbl" id="plbl">—</div>
+        <div class="parr" onclick="nav(1)">›</div>
+        <button class="btn btn-sm" onclick="goNow()">Aujourd'hui</button>
+      </div>
+      <div style="margin-left:auto">
+        <button class="btn btn-sm btn-dark" onclick="goPage('proj');openProjModal()">+ Projet</button>
+      </div>
+    </div>
+    <div class="plan-grid" id="plan-grid"></div>
+    <div class="sum" id="sum"></div>
+  </div>
+</div>
+
+<!-- PROJETS PAGE -->
+<div class="pg" id="pg-proj">
+  <div class="page-wrap">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between">
+      <div><div class="page-title">PROJETS</div><div class="page-sub">Bibliothèque LOOPPP — sync Notion à venir</div></div>
+      <button class="btn btn-dark" onclick="openProjModal()">+ Nouveau projet</button>
+    </div>
+    <div class="status-bar" id="status-bar"></div>
+    <div class="proj-grid" id="proj-grid"></div>
+  </div>
+</div>
+
+<!-- FREELANCES PAGE -->
+<div class="pg" id="pg-fl">
+  <div class="page-wrap">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between">
+      <div><div class="page-title">FREELANCES</div><div class="page-sub">Annuaire de l'équipe</div></div>
+      <button class="btn btn-dark" onclick="openFlModal()">+ Nouveau freelance</button>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:4px" id="fl-filters"></div>
+    <div class="fl-grid" id="fl-grid"></div>
+  </div>
+</div>
+
+<!-- ANALYTIQUE PAGE -->
+<div class="pg" id="pg-an">
+  <div class="page-wrap">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px">
+      <div><div class="page-title">ANALYTIQUE</div><div class="page-sub">Contrôle de gestion & rentabilité</div></div>
+      <div style="display:flex;gap:8px">
+        <select class="form-sel" id="an-proj" style="width:auto;font-size:11px;padding:5px 9px" onchange="renderAn()"><option value="">Tous les projets</option></select>
+        <select class="form-sel" id="an-fl" style="width:auto;font-size:11px;padding:5px 9px" onchange="renderAn()"><option value="">Tous les freelances</option></select>
+      </div>
+    </div>
+    <div class="kpi-row" id="kpi-row"></div>
+    <div id="an-content"></div>
+  </div>
+</div>
+
+<!-- PROJECT DAY POPUP -->
+<div class="pp-bg hidden" id="pp-bg" onclick="if(event.target===this)closePP()">
+  <div class="pp" id="pp"></div>
+</div>
+
+<!-- MODAL PROJECT -->
+<div class="modal-bg hidden" id="modal-proj-bg">
+  <div class="modal">
+    <div class="modal-title" id="mp-title">Nouveau Projet</div>
+    <div class="form-row form-2">
+      <div><label class="form-lbl">Référence</label><input class="form-inp" id="mp-ref" placeholder="26_083" style="font-family:'DM Mono',monospace;font-weight:700;letter-spacing:.05em"/></div>
+      <div><label class="form-lbl">Statut</label>
+        <select class="form-sel" id="mp-status">
+          <option value="upcoming">À venir</option><option value="active" selected>En cours</option>
+          <option value="done">Terminé</option><option value="pause">En pause</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row"><label class="form-lbl">Nom du projet</label><input class="form-inp" id="mp-name" placeholder="Ex: Shoot MIUMIU Paris"/></div>
+    <div class="form-row"><label class="form-lbl">Client</label><input class="form-inp" id="mp-client" placeholder="Ex: MIUMIU"/></div>
+    <div class="form-row form-2">
+      <div><label class="form-lbl">Date début</label><input class="form-inp" id="mp-start" type="date"/></div>
+      <div><label class="form-lbl">Date fin / shoot</label><input class="form-inp" id="mp-end" type="date"/></div>
+    </div>
+    <div class="form-row form-2">
+      <div><label class="form-lbl">Jours-hommes devisés</label><input class="form-inp" id="mp-days" type="number" value="10" min="0" step="0.5"/></div>
+      <div><label class="form-lbl">Budget MO max (€)</label><input class="form-inp" id="mp-budget" type="number" value="2500"/></div>
+    </div>
+    <div class="form-row"><label class="form-lbl">Couleur</label><div class="c-strip" id="mp-colors"></div></div>
+    <div class="modal-foot">
+      <button class="btn btn-r btn-sm hidden" id="mp-del" onclick="delProj()">Supprimer</button>
+      <button class="btn btn-sm" onclick="closeModal('modal-proj-bg')">Annuler</button>
+      <button class="btn btn-dark btn-sm" id="mp-save">Créer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL FREELANCE -->
+<div class="modal-bg hidden" id="modal-fl-bg">
+  <div class="modal">
+    <div class="modal-title" id="mf-title">Nouveau Freelance</div>
+    <div class="form-row form-2">
+      <div><label class="form-lbl">Prénom / Nom</label><input class="form-inp" id="mf-name" placeholder="Ex: Thomas M."/></div>
+      <div><label class="form-lbl">Rôle</label>
+        <select class="form-sel" id="mf-role" onchange="onRoleChange()">
+          <option>Constructeur</option><option>Peintre</option><option>Couture</option>
+          <option>Electricien</option><option>Sculpteur</option><option>Autre</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <label class="form-lbl">Tarif journalier forcé (optionnel)</label>
+      <input class="form-inp" id="mf-forced" type="number" placeholder="Laisser vide = tarifs par rôle"/>
+      <div class="role-hint" id="mf-hint"></div>
+    </div>
+    <div class="form-row"><label class="form-lbl">Tags</label><div class="tag-row" id="mf-tags"></div></div>
+    <div class="form-row"><label class="form-lbl">Couleur</label><div class="c-strip" id="mf-colors"></div></div>
+    <div class="modal-foot">
+      <button class="btn btn-r btn-sm hidden" id="mf-del" onclick="delFl()">Supprimer</button>
+      <button class="btn btn-sm" onclick="closeModal('modal-fl-bg')">Annuler</button>
+      <button class="btn btn-dark btn-sm" id="mf-save">Ajouter</button>
+    </div>
+  </div>
+</div>
+
+<!-- MOVE/COPY POPUP -->
+<div class="mc-popup hidden" id="mc-popup">
+  <div class="mc-popup-title" id="mc-popup-title">Déposer sur <span id="mc-popup-date"></span></div>
+  <div class="mc-popup-btn" id="mc-btn-copy" onclick="doCardAction('copy')">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="5" y="5" width="9" height="9" rx="1.5" stroke="#1a1a1a" stroke-width="1.5"/><path d="M11 5V3.5A1.5 1.5 0 009.5 2h-6A1.5 1.5 0 002 3.5v6A1.5 1.5 0 003.5 11H5" stroke="#1a1a1a" stroke-width="1.5"/></svg>
+    Copier ici
+  </div>
+  <div class="mc-popup-btn" id="mc-btn-move" onclick="doCardAction('move')">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/><path d="M8 2L5 5M8 2l3 3M8 14l-3-3M8 14l3-3M2 8l3-3M2 8l3 3M14 8l-3-3M14 8l-3 3" stroke="#1a1a1a" stroke-width="1.3" stroke-linecap="round"/></svg>
+    Déplacer ici
+  </div>
+  <div class="mc-popup-btn cancel" onclick="cancelCardAction()">Annuler</div>
+</div>
+<div id="mc-overlay" class="hidden" style="position:fixed;inset:0;z-index:799" onclick="cancelCardAction()"></div>
+
+<!-- DROP ACTION MENU -->
+<div id="drop-menu" class="drop-menu hidden"></div>
+<div id="drop-menu-overlay" style="position:fixed;inset:0;z-index:790;display:none" onclick="closeDropMenu()"></div>
+
+<script>
+// ══════════════════════════════════════
+// CONSTANTS
+// ══════════════════════════════════════
+const PC=['#f0c020','#ff5722','#e91e63','#009688','#3f51b5','#9c27b0','#ff9800','#2196f3','#4caf50','#795548'];
+const FC=['#ff5722','#2196f3','#4caf50','#9c27b0','#ff9800','#e91e63','#009688','#3f51b5','#f44336','#795548'];
+const TAGS=['Atelier','ON-SET','Strike','Peinture','Metal','Menuiserie','Soudure','Finition','Sculpture','Deco','Couture','Patine','Electricite','Montage','Transport'];
+const ROLES=['Constructeur','Peintre','Couture','Electricien','Sculpteur','Autre'];
+const ROLE_DEF={'Constructeur':{a:250,s:300,i:300},'Peintre':{a:250,s:300,i:300},'Couture':{a:300,s:320,i:300},'Electricien':{a:250,s:300,i:300},'Sculpteur':{a:280,s:320,i:300},'Autre':{a:250,s:300,i:300}};
+const PHASES=[
+  {id:'atelier',label:'Atelier',rk:'a',h:10},
+  {id:'shoot',label:'ON-SET',rk:'s',h:10},
+  {id:'install',label:'Install',rk:'i',h:10},
+  {id:'nuit',label:'Nuit',fixed:400,h:null},
+  {id:'dep',label:'Deplacement',fixed:80,h:null},
+];
+const DAYS=['LUN','MAR','MER','JEU','VEN','SAM','DIM'];
+const MONTHS=['Janvier','Fevrier','Mars','Avril','Mai','Juin','Juillet','Aout','Septembre','Octobre','Novembre','Decembre'];
+const STATUS_LIST=[{id:'all',l:'Tous'},{id:'active',l:'En cours'},{id:'upcoming',l:'A venir'},{id:'done',l:'Termines'},{id:'pause',l:'En pause'},{id:'archived',l:'Archives'}];
+
+// ══════════════════════════════════════
+// FERIES
+// ══════════════════════════════════════
+function eDateFR(y){const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),mo=Math.floor((h+l-7*m+114)/31),dy=((h+l-7*m+114)%31)+1;return new Date(y,mo-1,dy)}
+function dk(d){return d.toISOString().slice(0,10)}
+function addD(d,n){const x=new Date(d);x.setDate(x.getDate()+n);return x}
+const FER={};
+[2024,2025,2026,2027].forEach(y=>{
+  const e=eDateFR(y);
+  const s=(d,n)=>{FER[dk(d)]=n};
+  s(new Date(y,0,1),"Jour de l'An");s(addD(e,1),'Lundi de Paques');
+  s(new Date(y,4,1),'Fete du Travail');s(new Date(y,4,8),'Victoire 1945');
+  s(addD(e,39),'Ascension');s(addD(e,50),'Pentecote');
+  s(new Date(y,6,14),'Fete Nationale');s(new Date(y,7,15),'Assomption');
+  s(new Date(y,10,1),'Toussaint');s(new Date(y,10,11),'Armistice');
+  s(new Date(y,11,25),'Noel');
+});
+
+// ══════════════════════════════════════
+// STATE
+// ══════════════════════════════════════
+let D={
+  view:'month',offset:0,
+  projFilter:'all',roleFilter:'all',
+  editId:null,selColor:PC[0],
+  pp:null,ppSearch:'',
+  dragType:null,dragId:null,
+  pendingProjDate:null,
+  persons:[
+    {id:'fl1',name:'Alex R.',role:'Constructeur',color:'#ff5722',forced:null,tags:['Atelier','ON-SET'],fav:false},
+    {id:'fl2',name:'Camille T.',role:'Autre',color:'#2196f3',forced:null,tags:['Deco'],fav:true},
+    {id:'fl3',name:'Lea M.',role:'Couture',color:'#9c27b0',forced:null,tags:['Finition'],fav:false},
+    {id:'fl4',name:'Hugo D.',role:'Constructeur',color:'#4caf50',forced:null,tags:['Menuiserie'],fav:false},
+  ],
+  projects:[
+    {id:'p1',name:'Decor Arte Paris',ref:'PRJ-001',client:'Arte',color:'#f0c020',days:12,budget:3200,status:'active',start:'2026-04-14',end:'2026-04-28',archived:false},
+    {id:'p2',name:'Shoot Vogue',ref:'PRJ-002',client:'Vogue',color:'#ff5722',days:6,budget:1800,status:'done',start:'2026-01-10',end:'2026-01-15',archived:false},
+    {id:'p3',name:'Install Galerie X',ref:'PRJ-003',client:'Galerie X',color:'#2196f3',days:8,budget:2200,status:'upcoming',start:'2026-05-01',end:'2026-05-10',archived:false},
+  ],
+  bookings:[],
+};
+
+// ══════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════
+function uid(){return 'i'+Date.now()+Math.random().toString(36).slice(2,6)}
+
+function genRef(){
+  const year = new Date().getFullYear().toString().slice(2); // "26"
+  // Find highest existing ref number this year
+  const existing = D.projects
+    .map(p => p.ref || '')
+    .filter(r => r.startsWith(year + '_'))
+    .map(r => parseInt(r.split('_')[1]) || 0);
+  const max = existing.length > 0 ? Math.max(...existing) : 82; // start after 082
+  const next = max + 1;
+  return year + '_' + String(next).padStart(3, '0');
+}
+function isFerie(d){return!!FER[dk(d)]}
+function isWE(d){return d.getDay()===0||d.getDay()===6}
+function isToday(d){const t=new Date();return d.toDateString()===t.toDateString()}
+function ini(n){return n.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase()}
+function rgba(h,a){const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);return `rgba(${r},${g},${b},${a})`}
+function fmtS(d){return d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'})}
+function fmtL(d){return d.toLocaleDateString('fr-FR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'})}
+function wkn(d){const D=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));D.setUTCDate(D.getUTCDate()+4-(D.getUTCDay()||7));const y=new Date(Date.UTC(D.getUTCFullYear(),0,1));return Math.ceil((((D-y)/86400000)+1)/7)}
+function getMon(off=0){const n=new Date();n.setHours(0,0,0,0);const dw=n.getDay();const m=new Date(n);m.setDate(n.getDate()+(dw===0?-6:1-dw)+off*7);return m}
+function getWD(off=0){const m=getMon(off);return Array.from({length:7},(_,i)=>{const d=new Date(m);d.setDate(m.getDate()+i);return d})}
+function getPerson(id){return D.persons.find(p=>p.id===id)}
+function getProject(id){return D.projects.find(p=>p.id===id)}
+function getPhase(id){return PHASES.find(p=>p.id===id)}
+function getRate(p,phId){
+  if(!p)return 0;
+  if(p.forced)return p.forced;
+  const ph=getPhase(phId);if(!ph)return 250;
+  if(ph.fixed!=null)return ph.fixed;
+  const rd=ROLE_DEF[p.role]||ROLE_DEF['Autre'];
+  return rd[ph.rk]||250;
+}
+function calcCost(b){
+  const p=getPerson(b.personId);if(!p)return 0;
+  const ph=getPhase(b.type);if(!ph)return 0;
+  const mult=b.maj||1;
+  let base=ph.fixed!=null?ph.fixed:getRate(p,b.type);
+  if(b.chef)base+=50;
+  let cost=base*mult;
+  if(b.supH>0&&ph.h)cost+=((base/ph.h)*1.5*b.supH*mult);
+  return Math.round(cost*100)/100;
+}
+function pjDays(pid){return D.bookings.filter(b=>b.projectId===pid).reduce((s,b)=>s+1+(b.supH?b.supH/10:0),0)}
+function pjCost(pid){return D.bookings.filter(b=>b.projectId===pid).reduce((s,b)=>s+calcCost(b),0)}
+function phCls(id){return {atelier:'ph-atelier',shoot:'ph-shoot',install:'ph-install',nuit:'ph-nuit',dep:'ph-dep'}[id]||'ph-atelier'}
+function stInfo(s){return {active:{l:'En cours',c:'st-active'},upcoming:{l:'A venir',c:'st-upcoming'},done:{l:'Termine',c:'st-done'},pause:{l:'En pause',c:'st-pause'},archived:{l:'Archive',c:'st-arch'}}[s]||{l:s,c:'st-done'}}
+
+// ══════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════
+function goPage(pg){
+  document.querySelectorAll('.pg').forEach(el=>el.classList.remove('on'));
+  document.querySelectorAll('.nl').forEach(el=>el.classList.remove('on'));
+  document.getElementById('pg-'+pg).classList.add('on');
+  document.getElementById('nl-'+pg).classList.add('on');
+  if(pg==='plan')renderPlanning();
+  if(pg==='proj')renderProjets();
+  if(pg==='fl')renderFL();
+  if(pg==='an')renderAn();
+}
+function setView(v){D.view=v;D.offset=0;document.getElementById('vt-month').classList.toggle('on',v==='month');document.getElementById('vt-week').classList.toggle('on',v==='week');renderPlanning()}
+function nav(d){D.offset+=d;renderPlanning()}
+function goNow(){D.offset=0;renderPlanning()}
+
+// ══════════════════════════════════════
+// DRAG & DROP — clean implementation
+// ══════════════════════════════════════
+function makeDraggable(el, type, id){
+  el.draggable=true;
+  el.addEventListener('dragstart',e=>{
+    D.dragType=type;
+    D.dragId=id;
+    el.classList.add('dragging');
+    e.dataTransfer.effectAllowed='copy';
+    e.dataTransfer.setData('text/plain', JSON.stringify({type,id}));
+  });
+  el.addEventListener('dragend',()=>{
+    el.classList.remove('dragging');
+    D.dragType=null;
+    D.dragId=null;
+  });
+}
+
+function makeDropZone(el, onDrop, date){
+  // Only handles sidebar HTML5 drag (project chips / freelance chips)
+  el.addEventListener('dragenter',e=>{e.preventDefault()});
+  el.addEventListener('dragover',e=>{
+    e.preventDefault();
+    e.dataTransfer.dropEffect='copy';
+    if(!cardDrag) el.classList.add('drop-over');
+  });
+  el.addEventListener('dragleave',e=>{
+    if(!el.contains(e.relatedTarget))el.classList.remove('drop-over');
+  });
+  el.addEventListener('drop',e=>{
+    e.preventDefault();
+    el.classList.remove('drop-over');
+    if(cardDrag) return; // handled by pointer events
+    if(D.dragType && D.dragId) onDrop(D.dragType, D.dragId, e);
+  });
+}
+
+function makePostitDrop(el, projId, date){
+  // Only handles sidebar freelance drops onto existing cards
+  el.addEventListener('dragenter',e=>{e.preventDefault();e.stopPropagation()});
+  el.addEventListener('dragover',e=>{
+    e.preventDefault();e.stopPropagation();
+    if(cardDrag) return;
+    e.dataTransfer.dropEffect='copy';
+    el.classList.add('drop-on');
+  });
+  el.addEventListener('dragleave',e=>{
+    if(!el.contains(e.relatedTarget))el.classList.remove('drop-on');
+  });
+  el.addEventListener('drop',e=>{
+    e.preventDefault();e.stopPropagation();
+    el.classList.remove('drop-on');
+    if(cardDrag) return; // handled by pointer events
+    if(D.dragType==='freelance' && D.dragId){
+      addFlToCard(D.dragId, projId, date);
+    }
+  });
+}
+
+// ══════════════════════════════════════
+// SIDEBAR
+// ══════════════════════════════════════
+function renderSidebar(){
+  // Projects
+  const sp=document.getElementById('sb-projs');
+  sp.innerHTML='';
+  D.projects.filter(p=>!p.archived).forEach(proj=>{
+    const el=document.createElement('div');
+    el.className='proj-chip';
+    el.style.setProperty('--c',proj.color);
+    el.querySelector=()=>null;
+    el.innerHTML=`<div style="position:absolute;top:0;left:0;bottom:0;width:3px;background:${proj.color};border-radius:6px 0 0 6px"></div>
+      <div style="padding-left:6px;flex:1;min-width:0">
+        ${proj.ref?`<div class="proj-chip-ref">${proj.ref}</div>`:''}
+        <div class="proj-chip-name">${proj.name}</div>
+      </div>`;
+    makeDraggable(el,'project',proj.id);
+    sp.appendChild(el);
+  });
+
+  // Role filters
+  const roles=['all',...new Set(D.persons.map(p=>p.role))];
+  document.getElementById('sb-filters').innerHTML=roles.map(r=>`<span class="fpill${D.roleFilter===r?' on':''}" onclick="D.roleFilter='${r}';renderSidebar()">${r==='all'?'Tous':r}</span>`).join('');
+
+  // Freelances
+  const sf=document.getElementById('sb-fls');
+  sf.innerHTML='';
+  D.persons.filter(p=>D.roleFilter==='all'||p.role===D.roleFilter).forEach(p=>{
+    const el=document.createElement('div');
+    el.className='fl-chip';
+    el.innerHTML=`<div class="av" style="background:${rgba(p.color,.15)};color:${p.color}">${ini(p.name)}</div>
+      <div class="fl-inf"><div class="fl-nm">${p.name}${p.fav?' <span style="color:#f0c000;font-size:10px">★</span>':''}</div><div class="fl-rl">${p.role}</div></div>`;
+    makeDraggable(el,'freelance',p.id);
+    sf.appendChild(el);
+  });
+}
+
+// ══════════════════════════════════════
+// PLANNING
+// ══════════════════════════════════════
+function renderPlanning(){
+  renderSidebar();
+  if(D.view==='month')renderMonth();
+  else renderWeek();
+}
+
+function renderMonth(){
+  const now=new Date();
+  const target=new Date(now.getFullYear(),now.getMonth()+D.offset,1);
+  document.getElementById('plbl').textContent=`${MONTHS[target.getMonth()]} ${target.getFullYear()}`;
+  const grid=document.getElementById('plan-grid');
+  const g=document.createElement('div');g.className='mg';
+  DAYS.forEach(d=>{const h=document.createElement('div');h.className='mg-hd';h.textContent=d;g.appendChild(h)});
+  const first=new Date(target.getFullYear(),target.getMonth(),1);
+  let sdow=first.getDay();if(sdow===0)sdow=7;
+  const start=new Date(first);start.setDate(start.getDate()-(sdow-1));
+  for(let i=0;i<42;i++){
+    const d=new Date(start);d.setDate(start.getDate()+i);
+    const other=d.getMonth()!==target.getMonth();
+    const cell=document.createElement('div');
+    let cls='mc';
+    if(other)cls+=' other';
+    else if(isToday(d))cls+=' today';
+    else if(isFerie(d))cls+=' ferie';
+    else if(isWE(d))cls+=' we';
+    cell.className=cls;
+    // Day number
+    const num=document.createElement('div');
+    num.className='mc-num'+(isToday(d)?' tn':'');
+    num.innerHTML=String(d.getDate())+(isFerie(d)?` <span class="mc-ferie">${FER[dk(d)]}</span>`:'');
+    cell.appendChild(num);
+    if(!other){
+      // + button
+      const add=document.createElement('div');add.className='mc-add';add.textContent='+';
+      add.onclick=e=>{e.stopPropagation();openPPNew(dk(d))};
+      cell.appendChild(add);
+      // Post-its
+      const dayB=D.bookings.filter(b=>b.date===dk(d));
+      const byProj={};
+      dayB.forEach(b=>{if(!byProj[b.projectId])byProj[b.projectId]=[];byProj[b.projectId].push(b)});
+      D.projects.filter(p=>!p.archived&&byProj[p.id]).forEach(proj=>{
+        cell.appendChild(makePostit(proj,byProj[proj.id],dk(d)));
+      });
+      // Drop on cell (card move/copy + new drag)
+      makeCardDropZone(cell, dk(d));
+      makeCardDropZone(cell, dk(d));
+    makeDropZone(cell,(type,id)=>{
+        if(type==='project'){
+          // Create empty card for this project on this day
+          const exists=D.bookings.find(b=>b.projectId===id&&b.date===dk(d));
+          if(!exists){
+            // Create a "placeholder" booking with no person
+            D.bookings.push({id:uid(),personId:null,date:dk(d),projectId:id,type:'atelier',chef:false,supH:0,maj:1,target:0,placeholder:true});
+            renderPlanning();
+          }
+          // Open popup
+          openPP(id,dk(d));
+        } else if(type==='freelance'){
+          // Drop freelance on empty day — pick first active project or ask
+          const activeProj=D.projects.find(p=>!p.archived&&p.status==='active')||D.projects.find(p=>!p.archived);
+          if(!activeProj){alert('Creez un projet dabord !');return}
+          addFlToCard(id,activeProj.id,dk(d));
+          openPP(activeProj.id,dk(d));
+        }
+      });
+    }
+    g.appendChild(cell);
+  }
+  grid.innerHTML='';grid.appendChild(g);
+  renderSum(null,target);
+}
+
+function renderWeek(){
+  const days=getWD(D.offset);
+  document.getElementById('plbl').textContent=`Sem. ${wkn(days[0])} — ${fmtS(days[0])} > ${fmtS(days[6])}`;
+  const grid=document.getElementById('plan-grid');
+  const g=document.createElement('div');g.className='wg';
+  days.forEach((d,di)=>{
+    const hd=document.createElement('div');
+    let hcls='wc-hd';
+    if(isToday(d))hcls+=' today';else if(isWE(d))hcls+=' we';
+    hd.className=hcls;
+    hd.innerHTML=`<div class="wh-day">${DAYS[di]}</div><div class="wh-date">${fmtS(d)}</div>${isFerie(d)?`<div class="wh-ferie">${FER[dk(d)]}</div>`:''}`;
+    g.appendChild(hd);
+  });
+  days.forEach(d=>{
+    const cell=document.createElement('div');
+    cell.className='wc'+(isWE(d)||isFerie(d)?' we':'');
+    cell.dataset.date = dk(d);
+    const dayB=D.bookings.filter(b=>b.date===dk(d));
+    const byProj={};
+    dayB.forEach(b=>{if(!byProj[b.projectId])byProj[b.projectId]=[];byProj[b.projectId].push(b)});
+    D.projects.filter(p=>!p.archived&&byProj[p.id]).forEach(proj=>{
+      cell.appendChild(makePostit(proj,byProj[proj.id],dk(d)));
+    });
+    makeCardDropZone(cell, dk(d));
+    makeDropZone(cell,(type,id)=>{
+      if(type==='project'){
+        const exists=D.bookings.find(b=>b.projectId===id&&b.date===dk(d));
+        if(!exists){D.bookings.push({id:uid(),personId:null,date:dk(d),projectId:id,type:'atelier',chef:false,supH:0,maj:1,target:0,placeholder:true});renderPlanning()}
+        openPP(id,dk(d));
+      } else if(type==='freelance'){
+        const ap=D.projects.find(p=>!p.archived&&p.status==='active')||D.projects.find(p=>!p.archived);
+        if(!ap){alert('Creez un projet dabord !');return}
+        addFlToCard(id,ap.id,dk(d));openPP(ap.id,dk(d));
+      }
+    }, dk(d));
+    g.appendChild(cell);
+  });
+  grid.innerHTML='';grid.appendChild(g);
+  renderSum(days);
+}
+
+// ══════════════════════════════════════
+// POSTIT
+// ══════════════════════════════════════
+function makePostit(proj,bookings,date){
+  const booked=pjDays(proj.id);
+  const realBk=bookings.filter(b=>!b.placeholder);
+  const ph=getPhase(bookings[0]?.type||'atelier');
+  const total=realBk.reduce((s,b)=>s+calcCost(b),0);
+  const target=bookings[0]?.target||0;
+  const noTeam=realBk.length===0;
+
+  const el=document.createElement('div');
+  el.className='pi';
+  el.style.background=rgba(proj.color,.08);
+  el.style.borderColor=rgba(proj.color,.2);
+
+  const isWeekView = D.view === 'week';
+  const pHTML = isWeekView
+    ? realBk.map(b=>{
+        const p=getPerson(b.personId);if(!p)return'';
+        return `<div style="display:flex;align-items:center;gap:5px;padding:2px 0">
+          <div class="pi-pav" style="background:${rgba(p.color,.2)};color:${p.color};flex-shrink:0">${ini(p.name)}</div>
+          <span style="font-size:10px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.name}${b.chef?' <span style="color:#b28000;font-size:9px">★</span>':''}</span>
+          ${b.supH>0?`<span style="font-family:'DM Mono',monospace;font-size:9px;color:#aaa;margin-left:auto">+${b.supH}h</span>`:''}
+        </div>`;
+      }).join('')
+    : realBk.map(b=>{
+        const p=getPerson(b.personId);if(!p)return'';
+        return `<div class="pi-pav" style="background:${rgba(p.color,.2)};color:${p.color}" title="${p.name}">${ini(p.name)}</div>`;
+      }).join('');
+
+  let slotTxt='',slotColor='#888';
+  if(target>0){
+    if(realBk.length>=target){slotTxt=`${realBk.length}/${target} ✓`;slotColor='#1a8a42'}
+    else{slotTxt=`${realBk.length}/${target} · ${realBk.length} pers.`;slotColor='#b26300'}
+  } else {
+    slotTxt=realBk.length>0?`${realBk.length} pers.`:'Equipe a definir';
+    slotColor=realBk.length>0?'#555':'#ccc';
+  }
+
+  el.innerHTML=`
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:${proj.color};border-radius:7px 7px 0 0"></div>
+    <div class="pi-top">
+      <div style="flex:1;min-width:0">
+        ${proj.ref?`<div class="pi-ref">${proj.ref}</div>`:''}
+        <div class="pi-name">${proj.name}</div>
+      </div>
+    </div>
+    <span class="pi-badge ${phCls(bookings[0]?.type||'atelier')}">${ph?ph.label:'Atelier'}</span>
+    ${noTeam
+      ? `<div class="pi-empty-hint">Equipe a definir...</div>`
+      : isWeekView
+        ? `<div style="display:flex;flex-direction:column;gap:0;margin-bottom:4px">${pHTML}</div>`
+        : `<div class="pi-persons">${pHTML}</div>`}
+    <div class="pi-footer">
+      <div class="pi-slots" style="color:${slotColor}">${slotTxt}</div>
+      <div class="pi-cost">${total>0?total.toLocaleString('fr-FR')+' €':''}</div>
+    </div>`;
+
+  el.addEventListener('click',e=>{
+    if(el._wasDragged)return;
+    e.stopPropagation();openPP(proj.id,date)
+  });
+  makePostitDrop(el,proj.id,date);
+  makeCardDraggable(el,proj.id,date);
+  return el;
+}
+
+// ══════════════════════════════════════
+// SUMMARY
+// ══════════════════════════════════════
+function renderSum(days,month){
+  let bk;
+  if(days){const ks=new Set(days.map(dk));bk=D.bookings.filter(b=>ks.has(b.date)&&!b.placeholder)}
+  else{bk=D.bookings.filter(b=>{const d=new Date(b.date);return!b.placeholder&&d.getMonth()===month.getMonth()&&d.getFullYear()===month.getFullYear()})}
+  const total=bk.reduce((s,b)=>s+calcCost(b),0);
+  const ppl=new Set(bk.filter(b=>b.personId).map(b=>b.personId)).size;
+  const nbCards=new Set(bk.map(b=>b.projectId+'|'+b.date)).size;
+  // Count placeholder cards (project placed but no team yet)
+  const placeholders=days
+    ? D.bookings.filter(b=>b.placeholder&&new Set(days.map(dk)).has(b.date)).length
+    : D.bookings.filter(b=>{const d=new Date(b.date);return b.placeholder&&d.getMonth()===month.getMonth()&&d.getFullYear()===month.getFullYear()}).length;
+  let h=`<div class="ss"><div class="ss-l">${days?'Semaine':'Mois'} MO</div><div class="ss-v">${total.toLocaleString('fr-FR')} €</div></div>
+         <div class="ss"><div class="ss-l">Personnes</div><div class="ss-v muted">${ppl}</div></div>
+         <div class="ss"><div class="ss-l">Bookings</div><div class="ss-v muted">${bk.length}</div></div>
+         ${placeholders>0?`<div class="ss"><div class="ss-l" style="color:#b26300">A completer</div><div class="ss-v" style="color:#b26300">${placeholders}</div></div>`:''}`;
+  D.projects.filter(p=>!p.archived).forEach(proj=>{
+    const pb=bk.filter(b=>b.projectId===proj.id);if(!pb.length)return;
+    const pc=pb.reduce((s,b)=>s+calcCost(b),0);
+    const over=pjDays(proj.id)>proj.days;
+    const nbP=new Set(pb.map(b=>b.personId)).size;
+    h+=`<div class="ss"><div class="ss-l" style="color:${rgba(proj.color,.9)}">${(proj.ref?proj.ref+' ':'')+proj.name.slice(0,12)}</div><div class="ss-v" style="color:${over?'#e03030':'#1a1a1a'};font-size:15px">${pc.toLocaleString('fr-FR')}€ <span style="font-family:'DM Mono',monospace;font-size:9px;color:#aaa">· ${nbP}p</span></div></div>`;
+  });
+  document.getElementById('sum').innerHTML=h;
+}
+
+// ══════════════════════════════════════
+// POPUP PROJECT
+// ══════════════════════════════════════
+function openPPNew(date){
+  // Show a project picker overlay
+  showProjPicker(date);
+}
+
+function showProjPicker(date){
+  // Remove any existing picker
+  const existing = document.getElementById('proj-picker-overlay');
+  if(existing) existing.remove();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'proj-picker-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.35);backdrop-filter:blur(3px);z-index:500;display:flex;align-items:center;justify-content:center';
+  overlay.onclick = e => { if(e.target===overlay) overlay.remove(); };
+
+  const d = new Date(date+'T12:00:00');
+  const dStr = d.toLocaleDateString('fr-FR',{weekday:'long',day:'2-digit',month:'long'});
+
+  const activeProjs = D.projects.filter(p=>!p.archived);
+  const projItems = activeProjs.map(p => {
+    const alreadyOnDay = D.bookings.find(b=>b.projectId===p.id&&b.date===date);
+    return `<div onclick="pickProjForDay('${p.id}','${date}')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:6px;cursor:pointer;transition:background .1s;border:1px solid #eee;background:#fafafa;margin-bottom:6px" onmouseover="this.style.background='#f0ede8'" onmouseout="this.style.background='#fafafa'">
+      <div style="width:10px;height:10px;border-radius:3px;background:${p.color};flex-shrink:0"></div>
+      <div style="flex:1;min-width:0">
+        ${p.ref?`<div style="font-family:'DM Mono',monospace;font-size:8px;color:#bbb">${p.ref}</div>`:''}
+        <div style="font-weight:600;font-size:13px">${p.name}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:9px;color:#aaa">${p.client||''}</div>
+      </div>
+      ${alreadyOnDay?`<span style="font-family:'DM Mono',monospace;font-size:9px;padding:2px 7px;border-radius:20px;background:#e8f8ee;color:#1a8a42">Deja planifie</span>`:''}
+    </div>`;
+  }).join('');
+
+  overlay.innerHTML = `<div style="background:#fff;border:1px solid #e8e5df;border-radius:12px;width:420px;max-width:95vw;max-height:85vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.15);display:flex;flex-direction:column">
+    <div style="padding:18px 20px 14px;border-bottom:1px solid #f0ede8;flex-shrink:0">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.07em;margin-bottom:3px">Ajouter un projet</div>
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:#aaa">${dStr}</div>
+    </div>
+    <div style="padding:16px 20px;flex:1">
+      ${activeProjs.length ? `<div style="font-family:'DM Mono',monospace;font-size:9px;color:#bbb;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">Projets existants</div>${projItems}` : '<div style="color:#ccc;font-family:DM Mono,monospace;font-size:11px;text-align:center;padding:16px 0">Aucun projet actif</div>'}
+      <div onclick="createAndPickProj('${date}')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:6px;cursor:pointer;border:2px dashed #e0ddd8;margin-top:8px;transition:all .1s" onmouseover="this.style.borderColor='#1a1a1a';this.style.background='#f7f5f0'" onmouseout="this.style.borderColor='#e0ddd8';this.style.background='transparent'">
+        <div style="width:22px;height:22px;border-radius:50%;background:#f0ede8;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:300;color:#888">+</div>
+        <div style="font-weight:600;font-size:13px">Creer un nouveau projet</div>
+      </div>
+    </div>
+  </div>`;
+
+  document.body.appendChild(overlay);
+}
+
+function pickProjForDay(projId, date){
+  const overlay = document.getElementById('proj-picker-overlay');
+  if(overlay) overlay.remove();
+  if(!D.bookings.find(b=>b.projectId===projId&&b.date===date)){
+    D.bookings.push({id:uid(),personId:null,date,projectId:projId,type:'atelier',chef:false,supH:0,maj:1,target:0,placeholder:true});
+    renderPlanning();
+  }
+  openPP(projId, date);
+}
+
+function createAndPickProj(date){
+  const overlay = document.getElementById('proj-picker-overlay');
+  if(overlay) overlay.remove();
+  // Store pending date, open project modal, on save will open PP
+  D.pendingProjDate = date;
+  openProjModal();
+}
+function openPP(projId,date){
+  D.pp={projId,date};D.ppSearch='';
+  document.getElementById('pp-bg').classList.remove('hidden');
+  renderPP();
+}
+function closePP(){document.getElementById('pp-bg').classList.add('hidden');D.pp=null;D.ppSearch='';renderPlanning()}
+
+function renderPP(){
+  if(!D.pp)return;
+  const {projId,date}=D.pp;
+  const proj=getProject(projId);if(!proj)return;
+  const allBk=D.bookings.filter(b=>b.projectId===projId&&b.date===date);
+  const realBk=allBk.filter(b=>!b.placeholder);
+  const phase=allBk[0]?.type||'atelier';
+  const maj=allBk[0]?.maj||1;
+  const target=allBk[0]?.target||0;
+  const total=realBk.reduce((s,b)=>s+calcCost(b),0);
+  const totalSup=realBk.reduce((s,b)=>s+(b.supH||0),0);
+  const d=new Date(date+'T12:00:00');
+
+  const phOpts=PHASES.map(ph=>`<option value="${ph.id}"${ph.id===phase?'selected':''}>${ph.label}</option>`).join('');
+  const projOpts=D.projects.filter(p=>!p.archived).map(p=>`<option value="${p.id}"${p.id===projId?'selected':''}>${p.ref?p.ref+' ':''}${p.name}</option>`).join('');
+
+  let flRows='';
+  if(realBk.length===0){
+    flRows=`<div style="text-align:center;padding:20px 0;color:#ccc;font-family:'DM Mono',monospace;font-size:11px">
+      <div style="font-size:24px;margin-bottom:6px">👥</div>
+      Equipe a definir<br>Glissez des freelances ou cherchez ci-dessous
+    </div>`;
+  } else {
+    realBk.forEach(b=>{
+      const p=getPerson(b.personId);if(!p)return;
+      const rate=getRate(p,b.type);const cost=calcCost(b);const ph=getPhase(b.type);
+      const hsR=ph&&ph.h?(rate/ph.h*1.5).toFixed(1):'—';
+      flRows+=`<div class="pp-fl">
+        <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0">
+          <div class="av" style="background:${rgba(p.color,.15)};color:${p.color};width:30px;height:30px;font-size:12px">${ini(p.name)}</div>
+          <div><div class="pp-fl-nm">${p.name}</div><div class="pp-fl-rl">${p.role}</div></div>
+        </div>
+        <button class="chef-btn${b.chef?' on':''}" onclick="tgChef('${b.id}')">Chef +50</button>
+        <div style="text-align:right">
+          <div class="pp-fl-rate">${cost.toLocaleString('fr-FR')} €</div>
+          <div class="pp-fl-sub">${rate}€/j · ${hsR}€HS</div>
+        </div>
+        <div class="stp">
+          <div class="stp-b" onclick="stpHS('${b.id}',-0.5)">-</div>
+          <div class="stp-v">${b.supH||0}h</div>
+          <div class="stp-b" onclick="stpHS('${b.id}',0.5)">+</div>
+        </div>
+        <button class="btn btn-xs btn-r" onclick="delBk('${b.id}')">✕</button>
+      </div>`;
+    });
+  }
+
+  const bulkHTML=realBk.length>0?'<div class="bulk-row"><button class="bulk-b" onclick="blkHS(0.5)">+0.5h a tous</button><button class="bulk-b" onclick="blkHS(1)">+1h a tous</button><button class="bulk-b" onclick="blkHS(0,true)">Reset HS</button></div>':'';
+
+  // search results rendered separately in onPPSearch
+
+  document.getElementById('pp').innerHTML=`
+    <div class="pp-head" style="border-top:3px solid ${proj.color}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          ${proj.ref?`<div style="font-family:'DM Mono',monospace;font-size:10px;color:#bbb;margin-bottom:2px">${proj.ref}</div>`:''}
+          <div class="pp-title">${proj.name}</div>
+          <div class="pp-meta">${fmtL(d)}</div>
+        </div>
+        <button class="btn btn-sm" onclick="closePP()">Fermer</button>
+      </div>
+    </div>
+    <div class="pp-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div><label class="form-lbl">Projet</label>
+          <select class="form-sel" style="font-size:11px;padding:6px 9px" onchange="chgProj(this.value)">${projOpts}</select></div>
+        <div><label class="form-lbl">Phase / Type</label>
+          <select class="form-sel" style="font-size:11px;padding:6px 9px" onchange="chgPhase(this.value)">${phOpts}</select></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+        <div>
+          <label class="form-lbl">Majoration</label>
+          <div class="maj-row">
+            ${[[1,'Normal'],[1.5,'Sam x1.5'],[2,'Dim x2']].map(([v,l])=>`<div class="maj-btn${v==maj?' on':''}" onclick="chgMaj(${v})">${l}</div>`).join('')}
+          </div>
+        </div>
+        <div><label class="form-lbl">Effectif cible</label>
+          <input class="form-inp" type="number" min="0" value="${target}" style="font-size:11px;padding:6px 9px" oninput="chgTarget(parseInt(this.value)||0)"></div>
+      </div>
+      <div class="pp-sec" style="margin-top:14px">Equipe (${realBk.length}${target>0?' / objectif '+target:''})</div>
+      ${bulkHTML}
+      ${flRows}
+      <div class="pp-sec">Ajouter un freelance</div>
+      <input class="pp-search" id="pp-srch" placeholder="Rechercher un freelance..." autocomplete="off" oninput="onPPSearch(this.value)">
+      <div id="pp-sr-results"></div>
+    </div>
+    <div class="pp-foot">
+      <button class="btn btn-xs btn-r" onclick="delCard()">Supprimer la carte</button>
+      <div style="text-align:right">
+        <div class="pp-lbl">HS: ${totalSup}h · Total journee</div>
+        <div class="pp-total">${total.toLocaleString('fr-FR')} €</div>
+      </div>
+    </div>`;
+
+
+}
+
+function addFlToCard(flId,projId,date){
+  // Check if person already booked on this day on ANY project
+  const alreadyDay=D.bookings.find(b=>b.personId===flId&&b.date===date&&!b.placeholder);
+  if(alreadyDay){
+    const existProj=getProject(alreadyDay.projectId);
+    const p=getPerson(flId);
+    alert((p?p.name:'Cette personne')+' est deja book'+String.fromCharCode(233)+' le '+date+(existProj?' sur '+existProj.name:'')+'.');
+    return;
+  }
+  // Get phase and maj from existing bookings on this card
+  const existing=D.bookings.find(b=>b.projectId===projId&&b.date===date);
+  const phase=existing?.type||'atelier';
+  const maj=existing?.maj||1;
+  const target=existing?.target||0;
+  // Remove placeholder if exists
+  D.bookings=D.bookings.filter(b=>!(b.projectId===projId&&b.date===date&&b.placeholder));
+  D.bookings.push({id:uid(),personId:flId,date,projectId:projId,type:phase,chef:false,supH:0,maj,target});
+  renderPlanning();save();
+  if(D.pp&&D.pp.projId===projId&&D.pp.date===date)renderPP();
+}
+
+function addFlPP(flId){if(!D.pp)return;D.ppSearch='';addFlToCard(flId,D.pp.projId,D.pp.date)}
+
+function onPPSearch(val){
+  D.ppSearch=val;
+  if(!D.pp)return;
+  const {projId,date}=D.pp;
+  const phase=D.bookings.find(b=>b.projectId===projId&&b.date===date)?.type||'atelier';
+  const realBk=D.bookings.filter(b=>b.projectId===projId&&b.date===date&&!b.placeholder);
+  const alreadyIds=new Set(realBk.map(b=>b.personId));
+  const srDiv=document.getElementById('pp-sr-results');
+  if(!srDiv)return;
+  if(val.length<2){srDiv.innerHTML='';return}
+  const res=D.persons.filter(p=>!alreadyIds.has(p.id)&&p.name.toLowerCase().includes(val.toLowerCase()));
+  if(!res.length){srDiv.innerHTML='';return}
+  srDiv.innerHTML='<div class="pp-sr">'+res.map(p=>`<div class="pp-sri" onclick="addFlPP('${p.id}')">
+    <div class="av" style="background:${rgba(p.color,.15)};color:${p.color};width:22px;height:22px;font-size:9px">${ini(p.name)}</div>
+    <span style="font-weight:600">${p.name}</span>
+    <span style="font-family:'DM Mono',monospace;font-size:9px;color:#bbb">${p.role}</span>
+    <span style="font-family:'DM Mono',monospace;font-size:10px;color:#888;margin-left:auto">${getRate(p,phase)}€/j</span>
+  </div>`).join('')+'</div>';
+}
+function tgChef(id){const b=D.bookings.find(x=>x.id===id);if(b){b.chef=!b.chef;renderPP();renderPlanning();save()}}
+function stpHS(id,delta){const b=D.bookings.find(x=>x.id===id);if(b){b.supH=Math.max(0,Math.round(((b.supH||0)+delta)*10)/10);renderPP();renderPlanning();save()}}
+function blkHS(delta,reset=false){
+  if(!D.pp)return;
+  D.bookings.filter(b=>b.projectId===D.pp.projId&&b.date===D.pp.date&&!b.placeholder).forEach(b=>{
+    b.supH=reset?0:Math.max(0,Math.round(((b.supH||0)+delta)*10)/10);
+  });
+  renderPP();renderPlanning();save();
+}
+function chgPhase(v){if(!D.pp)return;D.bookings.filter(b=>b.projectId===D.pp.projId&&b.date===D.pp.date).forEach(b=>b.type=v);renderPP();renderPlanning();save()}
+function chgMaj(v){if(!D.pp)return;D.bookings.filter(b=>b.projectId===D.pp.projId&&b.date===D.pp.date).forEach(b=>b.maj=v);renderPP();renderPlanning();save()}
+function chgProj(v){
+  if(!D.pp)return;
+  D.bookings.filter(b=>b.projectId===D.pp.projId&&b.date===D.pp.date).forEach(b=>b.projectId=v);
+  D.pp.projId=v;renderPP();renderPlanning();
+}
+function chgTarget(v){if(!D.pp)return;D.bookings.filter(b=>b.projectId===D.pp.projId&&b.date===D.pp.date).forEach(b=>b.target=v);renderPlanning()}
+function delBk(id){D.bookings=D.bookings.filter(b=>b.id!==id);renderPP();renderPlanning();save()}
+function delCard(){
+  if(!D.pp||!confirm('Supprimer ?'))return;
+  D.bookings=D.bookings.filter(b=>!(b.projectId===D.pp.projId&&b.date===D.pp.date));
+  closePP();
+}
+
+// ══════════════════════════════════════
+// PROJETS
+// ══════════════════════════════════════
+function renderProjets(){
+  const bar=document.getElementById('status-bar');
+  bar.innerHTML=STATUS_LIST.map(s=>{
+    const cnt=s.id==='all'?D.projects.filter(p=>!p.archived).length:
+               s.id==='archived'?D.projects.filter(p=>p.archived).length:
+               D.projects.filter(p=>p.status===s.id&&!p.archived).length;
+    return`<button class="stab${D.projFilter===s.id?' on':''}" onclick="D.projFilter='${s.id}';renderProjets()">${s.l}<span class="stab-n">${cnt}</span></button>`;
+  }).join('');
+  let list=D.projFilter==='all'?D.projects.filter(p=>!p.archived):
+           D.projFilter==='archived'?D.projects.filter(p=>p.archived):
+           D.projects.filter(p=>p.status===D.projFilter&&!p.archived);
+  const grid=document.getElementById('proj-grid');
+  if(!list.length){grid.innerHTML='<div style="color:#ccc;font-family:\'DM Mono\',monospace;padding:40px;grid-column:1/-1">Aucun projet.</div>';return}
+  grid.innerHTML=list.map(proj=>{
+    const booked=pjDays(proj.id);const cost=pjCost(proj.id);
+    const pct=proj.budget>0?Math.min(100,(cost/proj.budget)*100):0;
+    const fc=pct>90?'#e03030':pct>70?'#b26300':'#1a8a42';
+    const si=proj.archived?{l:'Archive',c:'st-arch'}:stInfo(proj.status);
+    return`<div class="pc">
+      <div class="pc-stripe" style="background:${proj.color}"></div>
+      <div class="pc-ref">${proj.ref||''}</div>
+      <div class="pc-name">${proj.name}</div>
+      <div class="pc-client">${proj.client||'—'}</div>
+      <div class="pc-stats">
+        <div class="pc-stat"><div class="pc-stat-l">Jours MO</div><div class="pc-stat-v" style="color:${fc}">${booked.toFixed(1)} / ${proj.days}j</div></div>
+        <div class="pc-stat"><div class="pc-stat-l">Budget MO</div><div class="pc-stat-v" style="color:${fc}">${cost.toLocaleString('fr-FR')}€</div></div>
+      </div>
+      <div class="pc-bar"><div class="pc-bar-f" style="width:${pct}%;background:${fc}"></div></div>
+      <div class="pc-foot">
+        <span class="pc-status ${si.c}">${si.l}</span>
+        <div class="pc-actions">
+          <button class="btn btn-xs" onclick="editProj('${proj.id}')">Modifier</button>
+          ${!proj.archived?`<button class="btn btn-xs" onclick="archProj('${proj.id}')">Archiver</button>`:`<button class="btn btn-xs" onclick="unarchProj('${proj.id}')">Restaurer</button>`}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function archProj(id){const p=getProject(id);if(p){p.archived=true;p.status='archived'}renderProjets();renderPlanning();save()}
+function unarchProj(id){const p=getProject(id);if(p){p.archived=false;p.status='done'}renderProjets();renderPlanning();save()}
+
+// ══════════════════════════════════════
+// FREELANCES
+// ══════════════════════════════════════
+function renderFL(){
+  const roles=['all',...new Set(D.persons.map(p=>p.role))];
+  document.getElementById('fl-filters').innerHTML=roles.map(r=>`<span class="fpill${D.roleFilter===r?' on':''}" onclick="D.roleFilter='${r}';renderFL()">${r==='all'?'Tous':r}</span>`).join('');
+  const filtered=D.persons.filter(p=>D.roleFilter==='all'||p.role===D.roleFilter);
+  const grid=document.getElementById('fl-grid');
+  if(!filtered.length){grid.innerHTML='<div style="color:#ccc;font-family:\'DM Mono\',monospace;padding:40px">Aucun freelance.</div>';return}
+  grid.innerHTML=filtered.map(p=>{
+    const nbBk=D.bookings.filter(b=>b.personId===p.id&&!b.placeholder).length;
+    const totalCost=D.bookings.filter(b=>b.personId===p.id&&!b.placeholder).reduce((s,b)=>s+calcCost(b),0);
+    const nbProj=new Set(D.bookings.filter(b=>b.personId===p.id&&!b.placeholder).map(b=>b.projectId)).size;
+    const rd=ROLE_DEF[p.role]||ROLE_DEF['Autre'];
+    return`<div class="flc">
+      <div class="flc-stripe" style="background:${p.color}"></div>
+      <span class="fav${p.fav?' on':''}" onclick="tgFav('${p.id}')">★</span>
+      <div class="flc-top">
+        <div class="flc-av" style="background:${rgba(p.color,.12)};color:${p.color}">${ini(p.name)}</div>
+        <div><div class="flc-nm">${p.name}</div><div class="flc-rl">${p.role}</div></div>
+      </div>
+      <div class="flc-rates">
+        <div><div class="flc-rate-l">Atelier</div><div class="flc-rate-v">${p.forced||rd.a}€</div></div>
+        <div><div class="flc-rate-l">ON-SET</div><div class="flc-rate-v">${p.forced||rd.s}€</div></div>
+        <div><div class="flc-rate-l">Install</div><div class="flc-rate-v">${p.forced||rd.i}€</div></div>
+        <div><div class="flc-rate-l">Chef +</div><div class="flc-rate-v" style="color:#b28000">50€</div></div>
+      </div>
+      ${p.tags?.length?`<div class="flc-tags">${p.tags.map(t=>`<span class="flc-tag">${t}</span>`).join('')}</div>`:''}
+      <div class="flc-stats">
+        <div><div class="flc-st-l">Projets</div><div class="flc-st-v">${nbProj}</div></div>
+        <div><div class="flc-st-l">Bookings</div><div class="flc-st-v">${nbBk}</div></div>
+        <div><div class="flc-st-l">Total</div><div class="flc-st-v">${totalCost.toLocaleString('fr-FR')}€</div></div>
+      </div>
+      <div class="flc-foot">
+        <button class="btn btn-xs" onclick="editFl('${p.id}')">Modifier</button>
+        <button class="btn btn-xs btn-r" onclick="delFl('${p.id}')">Suppr.</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function tgFav(id){const p=getPerson(id);if(p){p.fav=!p.fav;renderFL();save()}}
+
+// ══════════════════════════════════════
+// ANALYTIQUE
+// ══════════════════════════════════════
+function renderAn(){
+  const ps=document.getElementById('an-proj');const pv=ps.value;
+  ps.innerHTML='<option value="">Tous les projets</option>'+D.projects.filter(p=>!p.archived).map(p=>`<option value="${p.id}"${p.id===pv?'selected':''}>${p.ref?p.ref+' ':''}${p.name}</option>`).join('');
+  const fs=document.getElementById('an-fl');const fv=fs.value;
+  fs.innerHTML='<option value="">Tous les freelances</option>'+D.persons.map(p=>`<option value="${p.id}"${p.id===fv?'selected':''}>${p.name}</option>`).join('');
+  let bk=D.bookings.filter(b=>!b.placeholder);
+  if(ps.value)bk=bk.filter(b=>b.projectId===ps.value);
+  if(fs.value)bk=bk.filter(b=>b.personId===fs.value);
+  const total=bk.reduce((s,b)=>s+calcCost(b),0);
+  const ppl=new Set(bk.map(b=>b.personId)).size;
+  const projs=new Set(bk.map(b=>b.projectId)).size;
+  document.getElementById('kpi-row').innerHTML=`
+    <div class="kpi y"><div class="kpi-l">Cout MO</div><div class="kpi-v">${total.toLocaleString('fr-FR')} €</div><div class="kpi-sub">${bk.length} bookings</div></div>
+    <div class="kpi g"><div class="kpi-l">Freelances</div><div class="kpi-v">${ppl}</div><div class="kpi-sub">personnes</div></div>
+    <div class="kpi b"><div class="kpi-l">Projets</div><div class="kpi-v">${projs}</div></div>
+    <div class="kpi"><div class="kpi-l">Jours</div><div class="kpi-v">${bk.length}</div></div>`;
+  const byP={};bk.forEach(b=>{if(!byP[b.projectId])byP[b.projectId]={cost:0,days:0,ppl:new Set()};byP[b.projectId].cost+=calcCost(b);byP[b.projectId].days++;byP[b.projectId].ppl.add(b.personId)});
+  const pRows=Object.entries(byP).map(([pid,d])=>{
+    const proj=getProject(pid);if(!proj)return'';
+    const pct=proj.budget>0?Math.min(100,Math.round((d.cost/proj.budget)*100)):0;
+    const fc=pct>90?'#e03030':pct>70?'#b26300':'#1a8a42';
+    return`<tr>
+      <td><span style="display:inline-block;width:7px;height:7px;border-radius:2px;background:${proj.color};margin-right:6px"></span>${proj.ref?`<span style="font-family:'DM Mono',monospace;font-size:9px;color:#bbb;margin-right:4px">${proj.ref}</span>`:''}${proj.name}</td>
+      <td>${proj.client||'—'}</td>
+      <td style="font-family:'DM Mono',monospace">${pjDays(pid).toFixed(1)} / ${proj.days}j</td>
+      <td><div class="bar-row"><div class="bar-t"><div class="bar-f" style="width:${pct}%;background:${fc}"></div></div><span style="font-family:'DM Mono',monospace;font-size:9px;color:${fc}">${pct}%</span></div></td>
+      <td style="font-family:'DM Mono',monospace;color:${fc};font-weight:600">${d.cost.toLocaleString('fr-FR')} € / ${proj.budget.toLocaleString('fr-FR')} €</td>
+    </tr>`;
+  }).join('');
+  const byF={};bk.forEach(b=>{if(!byF[b.personId])byF[b.personId]={cost:0,days:0,projs:new Set()};byF[b.personId].cost+=calcCost(b);byF[b.personId].days++;byF[b.personId].projs.add(b.projectId)});
+  const fRows=Object.entries(byF).map(([fid,d])=>{
+    const p=getPerson(fid);if(!p)return'';
+    return`<tr>
+      <td><div style="display:flex;align-items:center;gap:7px"><div class="av" style="width:20px;height:20px;font-size:8px;background:${rgba(p.color,.12)};color:${p.color}">${ini(p.name)}</div>${p.name}</div></td>
+      <td style="font-family:'DM Mono',monospace;font-size:9px;color:#bbb">${p.role}</td>
+      <td style="font-family:'DM Mono',monospace">${d.days}j</td>
+      <td style="font-family:'DM Mono',monospace">${d.projs.size}</td>
+      <td style="font-family:'DM Mono',monospace;font-weight:600">${d.cost.toLocaleString('fr-FR')} €</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('an-content').innerHTML=`
+    <div class="an-sec"><div class="an-sec-t">Par projet</div>
+      <table class="an-tb"><thead><tr><th>Projet</th><th>Client</th><th>Jours MO</th><th>Budget</th><th>Cout MO</th></tr></thead>
+      <tbody>${pRows||'<tr><td colspan="5" style="text-align:center;color:#ccc;padding:20px">Aucun booking</td></tr>'}</tbody></table></div>
+    <div class="an-sec"><div class="an-sec-t">Par freelance</div>
+      <table class="an-tb"><thead><tr><th>Freelance</th><th>Role</th><th>Jours</th><th>Projets</th><th>Total</th></tr></thead>
+      <tbody>${fRows||'<tr><td colspan="5" style="text-align:center;color:#ccc;padding:20px">Aucun booking</td></tr>'}</tbody></table></div>
+    <div class="an-sec"><div class="an-sec-t">Export factures</div>${buildInvTable(bk)}
+      <button class="btn btn-dark btn-sm" onclick="exportCSV()" style="margin-top:10px">Exporter CSV</button></div>`;
+}
+
+function buildInvTable(bk){
+  const byF={};bk.forEach(b=>{if(!byF[b.personId])byF[b.personId]=[];byF[b.personId].push(b)});
+  if(!Object.keys(byF).length)return'<div style="color:#ccc;font-family:\'DM Mono\',monospace;font-size:11px;padding:16px 0">Aucun booking</div>';
+  return Object.entries(byF).map(([fid,bks])=>{
+    const p=getPerson(fid);if(!p)return'';
+    bks.sort((a,b)=>a.date.localeCompare(b.date));
+    const total=bks.reduce((s,b)=>s+calcCost(b),0);
+    const rows=bks.map(b=>{
+      const ph=getPhase(b.type);const proj=getProject(b.projectId);const cost=calcCost(b);
+      return`<tr>
+        <td style="font-family:'DM Mono',monospace;font-size:10px">${b.date}</td>
+        <td>${proj?`<span style="background:${rgba(proj.color,.1)};color:${proj.color};padding:1px 5px;border-radius:3px;font-size:10px;font-weight:600">${proj.name}</span>`:'—'}</td>
+        <td><span class="${phCls(b.type)}" style="padding:1px 5px;border-radius:3px;font-family:'DM Mono',monospace;font-size:9px">${ph?ph.label:b.type}</span></td>
+        <td style="font-family:'DM Mono',monospace;font-size:10px">${b.chef?'Chef':''}</td>
+        <td style="font-family:'DM Mono',monospace;font-size:10px">${b.supH>0?'+'+b.supH+'h':'—'}</td>
+        <td style="font-family:'DM Mono',monospace;font-size:10px">${b.maj>1?'x'+b.maj:'—'}</td>
+        <td style="font-family:'DM Mono',monospace;font-weight:600">${cost.toLocaleString('fr-FR')} €</td>
+      </tr>`;
+    }).join('');
+    return`<div style="margin-bottom:18px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
+        <div class="av" style="width:28px;height:28px;font-size:11px;background:${rgba(p.color,.12)};color:${p.color}">${ini(p.name)}</div>
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.06em">${p.name}</span>
+        <span style="font-family:'DM Mono',monospace;font-size:9px;color:#bbb">${p.role}</span>
+        <button class="btn btn-xs" onclick="expFlCSV('${fid}')" style="margin-left:auto">CSV</button>
+      </div>
+      <table class="an-tb"><thead><tr><th>Date</th><th>Projet</th><th>Type</th><th>Chef</th><th>Sup</th><th>Maj</th><th>Montant</th></tr></thead>
+      <tbody>${rows}<tr class="tot"><td colspan="6" style="text-align:right;color:#bbb">TOTAL</td><td style="font-weight:700">${total.toLocaleString('fr-FR')} €</td></tr></tbody></table></div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════
+// MODALS
+// ══════════════════════════════════════
+function openProjModal(){
+  D.editId=null;
+  document.getElementById('mp-ref').value = genRef();
+  ['mp-name','mp-client','mp-start','mp-end'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('mp-status').value='active';
+  document.getElementById('mp-days').value=10;
+  document.getElementById('mp-budget').value=2500;
+  document.getElementById('mp-title').textContent='Nouveau Projet';
+  document.getElementById('mp-del').classList.add('hidden');
+  D.selColor=PC[0];mkCS('mp-colors',PC);
+  document.getElementById('mp-save').textContent='Creer';
+  document.getElementById('mp-save').onclick=saveProj;
+  document.getElementById('modal-proj-bg').classList.remove('hidden');
+}
+function editProj(id){
+  const proj=getProject(id);if(!proj)return;
+  D.editId=id;
+  document.getElementById('mp-ref').value=proj.ref||'';
+  document.getElementById('mp-name').value=proj.name;
+  document.getElementById('mp-client').value=proj.client||'';
+  document.getElementById('mp-status').value=proj.status||'active';
+  document.getElementById('mp-start').value=proj.start||'';
+  document.getElementById('mp-end').value=proj.end||'';
+  document.getElementById('mp-days').value=proj.days;
+  document.getElementById('mp-budget').value=proj.budget;
+  document.getElementById('mp-title').textContent='Modifier Projet';
+  document.getElementById('mp-del').classList.remove('hidden');
+  D.selColor=proj.color;mkCS('mp-colors',PC,proj.color);
+  document.getElementById('mp-save').textContent='Enregistrer';
+  document.getElementById('mp-save').onclick=saveProj;
+  document.getElementById('modal-proj-bg').classList.remove('hidden');
+}
+function saveProj(){
+  const name=document.getElementById('mp-name').value.trim();if(!name)return;
+  const data={name,ref:document.getElementById('mp-ref').value.trim(),client:document.getElementById('mp-client').value.trim(),status:document.getElementById('mp-status').value,start:document.getElementById('mp-start').value,end:document.getElementById('mp-end').value,days:parseFloat(document.getElementById('mp-days').value)||10,budget:parseFloat(document.getElementById('mp-budget').value)||2500,color:D.selColor,archived:false};
+  let newId = null;
+  if(D.editId){Object.assign(getProject(D.editId),data)}
+  else{newId=uid();D.projects.push({id:newId,...data})}
+  closeModal('modal-proj-bg');renderProjets();renderPlanning();save();
+  if(newId && D.pendingProjDate){
+    const date=D.pendingProjDate; D.pendingProjDate=null;
+    D.bookings.push({id:uid(),personId:null,date,projectId:newId,type:'atelier',chef:false,supH:0,maj:1,target:0,placeholder:true});
+    renderPlanning();
+    openPP(newId,date);
+  } else {
+    D.pendingProjDate=null;
+  }
+}
+function delProj(){if(!D.editId||!confirm('Supprimer ?'))return;D.projects=D.projects.filter(p=>p.id!==D.editId);D.bookings=D.bookings.filter(b=>b.projectId!==D.editId);closeModal('modal-proj-bg');renderProjets();renderPlanning()}
+
+function openFlModal(){
+  D.editId=null;
+  document.getElementById('mf-name').value='';
+  document.getElementById('mf-role').value='SETBUILDER';
+  document.getElementById('mf-forced').value='';
+  document.getElementById('mf-title').textContent='Nouveau Freelance';
+  document.getElementById('mf-del').classList.add('hidden');
+  D.selColor=FC[0];mkCS('mf-colors',FC);
+  mkTags('mf-tags',[]);onRoleChange();
+  document.getElementById('mf-save').textContent='Ajouter';
+  document.getElementById('mf-save').onclick=saveFl;
+  document.getElementById('modal-fl-bg').classList.remove('hidden');
+}
+function editFl(id){
+  const p=getPerson(id);if(!p)return;
+  D.editId=id;
+  document.getElementById('mf-name').value=p.name;
+  document.getElementById('mf-role').value=p.role;
+  document.getElementById('mf-forced').value=p.forced||'';
+  document.getElementById('mf-title').textContent='Modifier Freelance';
+  document.getElementById('mf-del').classList.remove('hidden');
+  D.selColor=p.color;mkCS('mf-colors',FC,p.color);
+  mkTags('mf-tags',p.tags||[]);onRoleChange();
+  document.getElementById('mf-save').textContent='Enregistrer';
+  document.getElementById('mf-save').onclick=saveFl;
+  document.getElementById('modal-fl-bg').classList.remove('hidden');
+}
+function onRoleChange(){
+  const r=document.getElementById('mf-role').value;
+  const rd=ROLE_DEF[r]||ROLE_DEF['Autre'];
+  document.getElementById('mf-hint').textContent=`Par defaut (${r}) : atelier ${rd.a}€/j · ON-SET ${rd.s}€/j · install ${rd.i}€/j`;
+}
+function saveFl(){
+  const name=document.getElementById('mf-name').value.trim();if(!name)return;
+  const role=document.getElementById('mf-role').value;
+  const fv=document.getElementById('mf-forced').value;
+  const forced=fv?parseFloat(fv):null;
+  const rd=ROLE_DEF[role]||ROLE_DEF['Autre'];
+  const tags=[...document.querySelectorAll('#mf-tags .tag-pill.on')].map(el=>el.textContent);
+  const data={name,role,forced,rateAtelier:rd.a,rateShoot:rd.s,rateInstall:rd.i,color:D.selColor,tags,fav:false};
+  if(D.editId){Object.assign(getPerson(D.editId),{...data,fav:getPerson(D.editId).fav})}
+  else{D.persons.push({id:uid(),...data})}
+  closeModal('modal-fl-bg');renderFL();renderSidebar();save();
+}
+function delFl(id){
+  const tid=id||D.editId;if(!tid||!confirm('Supprimer ?'))return;
+  D.persons=D.persons.filter(p=>p.id!==tid);
+  D.bookings=D.bookings.filter(b=>b.personId!==tid);
+  closeModal('modal-fl-bg');renderFL();renderPlanning();save();
+}
+function closeModal(id){document.getElementById(id).classList.add('hidden')}
+
+function mkCS(id,colors,sel){
+  D.selColor=sel||colors[0];
+  document.getElementById(id).innerHTML=colors.map(c=>`<div class="c-sw${(sel||colors[0])===c?' on':''}" style="background:${c}" onclick="D.selColor='${c}';document.querySelectorAll('#${id} .c-sw').forEach(x=>x.classList.remove('on'));this.classList.add('on')"></div>`).join('');
+}
+function mkTags(id,active){
+  document.getElementById(id).innerHTML=TAGS.map(t=>`<span class="tag-pill${active.includes(t)?' on':''}" onclick="this.classList.toggle('on')">${t}</span>`).join('');
+}
+
+// ══════════════════════════════════════
+// IMPORT / EXPORT
+// ══════════════════════════════════════
+function doExport(){
+  const data=JSON.stringify({persons:D.persons,projects:D.projects,bookings:D.bookings},null,2);
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type:'application/json'}));a.download='overtime-backup.json';a.click();
+}
+function doImport(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(d.persons)D.persons=d.persons;if(d.projects)D.projects=d.projects;if(d.bookings)D.bookings=d.bookings;renderPlanning();save();alert('Import OK!')}catch{alert('Fichier invalide')}};
+  r.readAsText(f);e.target.value='';
+}
+function exportCSV(){
+  let csv='\uFEFFFreelance,Role,Date,Projet,Type,Chef,HS,Maj,Montant\n';
+  D.bookings.filter(b=>!b.placeholder).forEach(b=>{
+    const p=getPerson(b.personId);const proj=getProject(b.projectId);const ph=getPhase(b.type);
+    csv+=`"${p?.name||''}","${p?.role||''}","${b.date}","${proj?.name||''}","${ph?.label||b.type}","${b.chef?'Oui':'Non'}","${b.supH||0}","x${b.maj||1}","${calcCost(b)}"\n`;
+  });
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='overtime.csv';a.click();
+}
+function expFlCSV(fid){
+  const bk=D.bookings.filter(b=>b.personId===fid&&!b.placeholder);const p=getPerson(fid);
+  let csv='\uFEFFDate,Projet,Type,Chef,HS,Maj,Montant\n';
+  bk.sort((a,b)=>a.date.localeCompare(b.date)).forEach(b=>{
+    const proj=getProject(b.projectId);const ph=getPhase(b.type);
+    csv+=`"${b.date}","${proj?.name||''}","${ph?.label||b.type}","${b.chef?'Oui':'Non'}","${b.supH||0}","x${b.maj||1}","${calcCost(b)}"\n`;
+  });
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download=`overtime-${p?.name||fid}.csv`;a.click();
+}
+
+// ══════════════════════════════════════
+// CARD DRAG (move/copy between days)
+// ══════════════════════════════════════
+// ── Pointer-based drag state ──
+let cardDrag = null; // {projId, fromDate, ghostEl, offsetX, offsetY}
+let dropMenuData = null;
+let currentDropCell = null;
+
+function makeCardDraggable(el, projId, date){
+  const proj = getProject(projId);
+
+  el.addEventListener('mousedown', e => {
+    // Only left click, not on buttons
+    if(e.button !== 0) return;
+    if(e.target.closest('button,.stp-b,.pi-person-del,.chef-btn,.mc-add')) return;
+    e.preventDefault();
+
+    const rect = el.getBoundingClientRect();
+    const offsetX = e.clientX - rect.left;
+    const offsetY = e.clientY - rect.top;
+
+    // Create ghost
+    const ghost = document.createElement('div');
+    ghost.id = 'drag-ghost';
+    ghost.style.background = proj ? rgba(proj.color, .12) : '#f0f0f0';
+    ghost.style.border = '2px solid ' + (proj ? proj.color : '#ccc');
+    ghost.style.color = '#1a1a1a';
+    ghost.style.width = rect.width + 'px';
+    ghost.style.left = (e.clientX - offsetX) + 'px';
+    ghost.style.top = (e.clientY - offsetY) + 'px';
+    ghost.style.opacity = '0';
+    ghost.innerHTML = (proj ? '<span style="font-size:9px;opacity:.6">' + (proj.ref||'') + '</span> ' : '') + (proj ? proj.name : '');
+    document.body.appendChild(ghost);
+
+    let started = false;
+
+    function onMove(ev){
+      if(!started){
+        const dx = ev.clientX - e.clientX;
+        const dy = ev.clientY - e.clientY;
+        if(Math.sqrt(dx*dx+dy*dy) < 6) return; // min distance
+        started = true;
+        ghost.style.opacity = '0.9';
+        el.classList.add('card-dragging');
+        cardDrag = {projId, fromDate: date};
+        D.dragType = null; D.dragId = null;
+      }
+      ghost.style.left = (ev.clientX - offsetX) + 'px';
+      ghost.style.top = (ev.clientY - offsetY) + 'px';
+
+      // Find cell under cursor
+      ghost.style.display = 'none';
+      const under = document.elementFromPoint(ev.clientX, ev.clientY);
+      ghost.style.display = '';
+      const cell = under ? under.closest('.mc,.wc') : null;
+
+      // Clear previous highlight
+      if(currentDropCell && currentDropCell !== cell){
+        currentDropCell.classList.remove('drop-active');
+        currentDropCell = null;
+      }
+      if(cell){
+        const cellDate = cell.dataset ? cell.dataset.date : null;
+        if(cellDate && cellDate !== date){
+          cell.classList.add('drop-active');
+          currentDropCell = cell;
+          // Show copy/move hint based on left/right
+          const cr = cell.getBoundingClientRect();
+          const isLeft = ev.clientX < cr.left + cr.width/2;
+          ghost.style.borderColor = isLeft ? '#1a8a42' : '#e03030';
+          ghost.title = isLeft ? 'Copier ici' : 'Déplacer ici';
+        }
+      }
+    }
+
+    function onUp(ev){
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+      ghost.remove();
+      el.classList.remove('card-dragging');
+      if(currentDropCell) currentDropCell.classList.remove('drop-active');
+
+      if(!started){ cardDrag = null; currentDropCell = null; return; }
+
+      // Find drop target
+      ghost.style.display = 'none';
+      const under = document.elementFromPoint(ev.clientX, ev.clientY);
+      const cell = under ? under.closest('.mc,.wc') : null;
+      cardDrag = null; currentDropCell = null;
+
+      if(cell){
+        const cellDate = cell.dataset ? cell.dataset.date : null;
+        if(cellDate && cellDate !== date){
+          const cr = cell.getBoundingClientRect();
+          const isLeft = ev.clientX < cr.left + cr.width/2;
+          const action = isLeft ? 'copy' : 'move';
+          dropMenuData = {projId, fromDate: date, toDate: cellDate};
+          doCardAction(action);
+          const toD = new Date(cellDate+'T12:00:00').toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'});
+          showSync((action==='copy'?'📋 Copié':'✂️ Déplacé')+' → '+toD, true);
+        }
+      }
+    }
+
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  });
+}
+
+function makeCardDropZone(cellEl, date){
+  // This is handled INSIDE makeDropZone and post-it drop — see combined handler below
+}
+
+function showDropMenu(projId, fromDate, toDate, cx, cy, targetEl){
+  dropMenuData = {projId, fromDate, toDate};
+  const proj = getProject(projId);
+  const toD = new Date(toDate+'T12:00:00').toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'});
+  const fromD = new Date(fromDate+'T12:00:00').toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'});
+
+  // Determine action from position within target cell
+  if(targetEl){
+    const rect = targetEl.getBoundingClientRect();
+    const action = cx < rect.left + rect.width / 2 ? 'copy' : 'move';
+    doCardAction(action);
+    showSync((action==='copy'?'📋 Copié':'✂️ Déplacé')+' → '+toD, true);
+    return;
+  }
+
+  // Fallback menu
+  const menu = document.getElementById('drop-menu');
+  menu.innerHTML = `
+    <div class="drop-menu-title">${proj?proj.name:''} · ${fromD} → ${toD}</div>
+    <div class="drop-menu-item" onclick="doCardAction('copy')"><span class="dmi-icon">📋</span><div><div>Copier</div><div class="dmi-sub">← côté gauche</div></div></div>
+    <div class="drop-menu-item" onclick="doCardAction('move')"><span class="dmi-icon">✂️</span><div><div>Déplacer</div><div class="dmi-sub">→ côté droit</div></div></div>
+    <div class="drop-menu-cancel" onclick="closeDropMenu()">Annuler</div>`;
+  const mw=200,mh=140,vw=window.innerWidth,vh=window.innerHeight;
+  let x=cx+8,y=cy+8;
+  if(x+mw>vw-8)x=cx-mw-8;
+  if(y+mh>vh-8)y=cy-mh-8;
+  menu.style.left=Math.max(8,x)+'px';
+  menu.style.top=Math.max(8,y)+'px';
+  menu.classList.remove('hidden');
+  document.getElementById('drop-menu-overlay').style.display='block';
+}
+
+function doCardAction(action){
+  if(!dropMenuData) return;
+  const {projId, fromDate, toDate} = dropMenuData;
+  const fromBk = D.bookings.filter(b => b.projectId === projId && b.date === fromDate);
+
+  if(action === 'copy'){
+    // Copy all bookings from fromDate to toDate (skip if already exists)
+    const existingIds = new Set(D.bookings.filter(b=>b.projectId===projId&&b.date===toDate).map(b=>b.personId));
+    fromBk.forEach(b => {
+      if(b.placeholder){
+        if(!D.bookings.find(bk=>bk.projectId===projId&&bk.date===toDate)){
+          D.bookings.push({...b, id:uid(), date:toDate});
+        }
+      } else if(!existingIds.has(b.personId)){
+        D.bookings.push({...b, id:uid(), date:toDate});
+      }
+    });
+  } else if(action === 'move'){
+    // Move: change date of all bookings
+    const toAlready = D.bookings.filter(b=>b.projectId===projId&&b.date===toDate);
+    if(toAlready.length > 0){
+      // Merge: add missing persons from fromDate to toDate, remove fromDate
+      const existingIds = new Set(toAlready.map(b=>b.personId));
+      fromBk.forEach(b => {
+        if(!b.placeholder && !existingIds.has(b.personId)){
+          D.bookings.push({...b, id:uid(), date:toDate});
+        }
+      });
+      D.bookings = D.bookings.filter(b=>!(b.projectId===projId&&b.date===fromDate));
+    } else {
+      // Simple move
+      fromBk.forEach(b => b.date = toDate);
+    }
+  }
+
+  closeDropMenu();
+  renderPlanning();save();
+}
+
+function closeDropMenu(){
+  document.getElementById('drop-menu').classList.add('hidden');
+  document.getElementById('drop-menu-overlay').style.display = 'none';
+  dropMenuData = null;
+}
+
+// ══════════════════════════════════════
+// SAUVEGARDE LOCALE (LocalStorage)
+// ══════════════════════════════════════
+const LS_KEY = 'overtime-looppp-v2';
+
+function save(){
+  try{
+    localStorage.setItem(LS_KEY, JSON.stringify({
+      persons: D.persons,
+      projects: D.projects,
+      bookings: D.bookings
+    }));
+  }catch(e){ console.warn('save error', e); }
+}
+
+function loadSaved(){
+  try{
+    const raw = localStorage.getItem(LS_KEY);
+    if(!raw) return;
+    const s = JSON.parse(raw);
+    if(s.persons && s.persons.length) D.persons = s.persons;
+    if(s.projects && s.projects.length) D.projects = s.projects;
+    if(s.bookings) D.bookings = s.bookings;
+  }catch(e){ console.warn('load error', e); }
+}
+
+// INIT
+loadSaved();
+renderPlanning();
+</script>
+</body>
+</html>
